@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.near.borshj.BorshBuffer;
 
+import borshpojo.PlayerAccount;
+
 public class BorshBufferTests {
   private BorshBuffer buffer;
 
@@ -97,6 +99,27 @@ public class BorshBufferTests {
   void readOptional() {
     assertEquals(Optional.empty(), BorshBuffer.wrap(new byte[]{0}).readOptional());
     assertEquals(Optional.of(42), BorshBuffer.wrap(new byte[]{1, 42, 0, 0, 0}).readOptional(Integer.class));
+  }
+
+  @Test
+  void readArrayOfPlayerAccount() {
+    final byte[] input = new byte[] {
+        65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
+        65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
+        65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
+        65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
+        1, 1 };
+
+    buffer = BorshBuffer.wrap(input);
+    PlayerAccount readObject = buffer.read(PlayerAccount.class);
+
+    assertEquals(
+        new PlayerAccount(
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".getBytes(),
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".getBytes(),
+            (byte) 1,
+            (byte) 1),
+        readObject);
   }
 
   @Test
@@ -194,6 +217,27 @@ public class BorshBufferTests {
   void writeOptional() {
     assertArrayEquals(new byte[]{0}, buffer.reset().writeOptional(Optional.empty()).toByteArray());
     assertArrayEquals(new byte[]{1, 42, 0, 0, 0}, buffer.reset().writeOptional(Optional.of(42)).toByteArray());
+  }
+
+  @Test
+  void writeArrayOfPlayerAccount() {
+    buffer.write(
+        new PlayerAccount(
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".getBytes(),
+            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA".getBytes(),
+            (byte) 1,
+            (byte) 1));
+
+    final byte[] expected = new byte[] {
+        65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
+        65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
+        65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
+        65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
+        1, 1 };
+
+    final byte[] actual = buffer.toByteArray();
+
+    assertArrayEquals(expected, actual);
   }
 
   @Test
