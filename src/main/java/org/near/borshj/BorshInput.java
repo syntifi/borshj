@@ -26,20 +26,20 @@ public interface BorshInput {
     else if (klass == Long.class || klass == long.class) {
       return (T)Long.valueOf(this.readU64());
     }
-    else if (klass == BigInteger.class) {
-      return (T)this.readU128();
-    }
     else if (klass == Float.class || klass == float.class) {
       return (T)Float.valueOf(this.readF32());
     }
     else if (klass == Double.class || klass == double.class) {
       return (T)Double.valueOf(this.readF64());
     }
+    else if (klass == Boolean.class || klass == boolean.class) {
+      return (T)Boolean.valueOf(this.readBoolean());
+    }
+    else if (klass == BigInteger.class) {
+      return (T)this.readU128();
+    }
     else if (klass == String.class) {
       return (T)this.readString();
-    }
-    else if (klass == Boolean.class) {
-      return (T)Boolean.valueOf(this.readBoolean());
     }
     else if (klass == Optional.class) {
       return (T)this.readOptional();
@@ -65,6 +65,9 @@ public interface BorshInput {
           assert(optionalArgs.length == 1);
           final Class optionalClass = (Class)optionalArgs[0];
           field.set(object, this.readOptional(optionalClass));
+        }
+        else if (fieldClass == byte[].class) {   
+          field.set(object, this.readFixedArray(Array.getLength(field.get(object))));
         }
         else {
           field.set(object, this.read(field.getType()));
@@ -151,7 +154,7 @@ public interface BorshInput {
     return (this.readU8() != 0);
   }
 
-  default public <T> @NonNull Optional<T> readOptional() {
+  default public @NonNull <T> Optional<T> readOptional() {
     final boolean isPresent = (this.readU8() != 0);
     if (!isPresent) {
       return (Optional<T>)Optional.empty();
@@ -159,7 +162,7 @@ public interface BorshInput {
     throw new AssertionError("Optional type has been erased and cannot be reconstructed");
   }
 
-  default public <T> @NonNull Optional<T> readOptional(final @NonNull Class klass) {
+  default public @NonNull <T> Optional<T> readOptional(final @NonNull Class klass) {
     final boolean isPresent = (this.readU8() != 0);
     return isPresent ? Optional.of(this.read(klass)) : Optional.empty();
   }

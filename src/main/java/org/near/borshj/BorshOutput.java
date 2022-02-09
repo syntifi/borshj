@@ -32,6 +32,9 @@ public interface BorshOutput<Self> {
     else if (object instanceof Double) {
       return this.writeF64((double)object);
     }
+    else if (object instanceof Boolean) {
+      return (Self)this.writeBoolean((Boolean)object);
+    }
     else if (object instanceof BigInteger) {
       return this.writeU128((BigInteger)object);
     }
@@ -41,8 +44,8 @@ public interface BorshOutput<Self> {
     else if (object instanceof List) {
       return (Self)this.writeArray((List)object);
     }
-    else if (object instanceof Boolean) {
-      return (Self)this.writeBoolean((Boolean)object);
+    else if (object instanceof byte[]) {
+      return (Self)this.writeFixedArray((byte[])object);
     }
     else if (object instanceof Optional) {
       return (Self)this.writeOptional((Optional)object);
