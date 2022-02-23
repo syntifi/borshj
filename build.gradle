@@ -1,36 +1,162 @@
-apply plugin: 'java'
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 
-jar {
-  archiveBaseName = 'borshj'
-  archiveVersion  = rootProject.file('VERSION').text.trim()
-  manifest {}
+plugins {
+    id 'java-library'
+    id 'jacoco'
+    id 'signing'
+    id 'maven-publish'
 }
 
-java {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-test {
-  useJUnitPlatform()
-}
+group = 'com.syntifi.near'
+version = rootProject.file('VERSION').text.trim()
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
-  mavenCentral()
-  google()
+    mavenCentral()
+    google()
 }
 
 dependencies {
-  // See: https://developer.android.com/jetpack/androidx/releases/annotation
-  // See: https://mvnrepository.com/artifact/androidx.annotation/annotation
-  compileOnly 'androidx.annotation:annotation:1.1.0'
+    // See: https://developer.android.com/jetpack/androidx/releases/annotation
+    // See: https://mvnrepository.com/artifact/androidx.annotation/annotation
+    compileOnly 'androidx.annotation:annotation:1.3.0'
 
-  // See: https://github.com/junit-team/junit5/releases
-  // See: https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    // See: https://github.com/junit-team/junit5/releases
+    // See: https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
-  // See: https://github.com/cglib/cglib/releases
-  // See: https://mvnrepository.com/artifact/cglib/cglib
-  testImplementation 'cglib:cglib:3.3.0'
+    // See: https://github.com/cglib/cglib/releases
+    // See: https://mvnrepository.com/artifact/cglib/cglib
+    testImplementation 'cglib:cglib:3.3.0'
 }
+
+test {
+    finalizedBy jacocoTestReport
+
+    useJUnitPlatform()
+    testLogging {
+        //showStandardStreams true
+        // set options for log level LIFECYCLE
+        events TestLogEvent.FAILED,
+                TestLogEvent.PASSED,
+                TestLogEvent.SKIPPED
+        //TestLogEvent.STANDARD_OUT
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showCauses true
+        //showStackTraces true
+
+        // set options for log level DEBUG and INFO
+        debug {
+            events TestLogEvent.STARTED,
+                    TestLogEvent.FAILED,
+                    TestLogEvent.PASSED,
+                    TestLogEvent.SKIPPED,
+                    TestLogEvent.STANDARD_ERROR
+            TestLogEvent.STANDARD_OUT
+            exceptionFormat TestExceptionFormat.FULL
+        }
+        //info.events = debug.events
+        //info.exceptionFormat = debug.exceptionFormat
+
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} passed, ${result.failedTestCount} failed, ${result.skippedTestCount} skipped)"
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+            }
+        }
+    }
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    afterEvaluate {
+        getClassDirectories().setFrom(classDirectories.files.collect {
+            fileTree(dir: it, exclude: '**/exception/**')
+        })
+    }
+}
+
+javadoc {
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = 'OSSRH'
+            def releasesRepoUrl = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+            def snapshotsRepoUrl = 'https://s01.oss.sonatype.org/content/repositories/snapshots/'
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = System.getenv('MAVEN_USERNAME')
+                password = System.getenv('MAVEN_PASSWORD')
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'borshj'
+            from components.java
+            pom {
+                name = 'borshj'
+                packaging = 'jar'
+                description = 'Borsh, binary serializer for security-critical projects.'
+                url = 'https://github.com/oak/borshj'
+
+                scm {
+                    connection = 'scm:git:https://github.com/oak/borshj.git'
+                    developerConnection = 'git@github.com:oak/borshj.git'
+                    url = 'https://github.com/oak/borshj'
+                }
+
+                issueManagement {
+                    system = 'GitHub'
+                    url = 'https://github.com/oak/borshj/issues'
+                }
+
+                ciManagement {
+                    system = 'Github Actions'
+                    url = 'https://github.com/oak/borshj/actions'
+                }
+
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'oak'
+                        name = 'Alexandre Carvalho'
+                        email = 'adcarvalho@gmail.com'
+                    }
+                    developer {
+                        id = 'ab3rtz'
+                        name = 'André Bertolace'
+                        email = 'andre@syntifi.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Reference at https://docs.gradle.org/current/userguide/signing_plugin.html#sec:in-memory-keys
+signing {
+    def signingKey = System.getenv('GPG_SIGNING_KEY') ?: findProperty('GPG_SIGNING_KEY')
+    def signingKeyPassword = System.getenv('GPG_SIGNING_KEY_PASSWORD') ?: findProperty('GPG_SIGNING_KEY_PASSWORD')
+    useInMemoryPgpKeys(signingKey, signingKeyPassword)
+    sign publishing.publications.mavenJava
+}
+

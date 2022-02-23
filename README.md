@@ -1,7 +1,8 @@
-# BorshJ
+# BorshJ 
 
-[![Project license](https://img.shields.io/badge/license-Public%20Domain-blue.svg)](https://unlicense.org)
-[![Discord](https://img.shields.io/discord/490367152054992913?label=discord)](https://discord.gg/Vyp7ETM)
+[![Java CI with Gradle](https://github.com/syntifi/borshj/actions/workflows/gradle.yml/badge.svg)](https://github.com/syntifi/borshj/actions/workflows/gradle.yml)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/syntifi/borshj?sort=semver)
+[![Project license](https://img.shields.io/badge/license-Apache%202-blue)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 
 **BorshJ** is an implementation of the [Borsh] binary serialization format for
 Java (and Kotlin, Scala, Clojure, Groovy, Jython, JRuby, etc.) projects.
@@ -51,7 +52,7 @@ ls -l build/libs/borshj-$(cat VERSION).jar
 To use the Borsh object serializer/deserializer, you need add just one import:
 
 ```java
-import org.near.borshj.Borsh;
+import com.syntifi.near.borshj.Borsh;
 ```
 
 ## Examples
@@ -93,21 +94,21 @@ Point2D point = Borsh.deserialize(bytes, Point2D.class);
 
 ## Type Mappings
 
-Borsh                 | Java           | TypeScript
---------------------- | -------------- | ----------
-`u8` integer          | `byte`         | `number`
-`u16` integer         | `short`        | `number`
-`u32` integer         | `int`          | `number`
-`u64` integer         | `long`         | `BN`
-`u128` integer        | [`BigInteger`] | `BN`
-`f32` float           | `float`        | N/A
-`f64` float           | `double`       | N/A
-fixed-size byte array | `byte[]`       | `Uint8Array`
-UTF-8 string          | `String`       | `string`
-option                | [`Optional`]   | `null` or type
-map                   | [`Map`]        | N/A
-set                   | [`Set`]        | N/A
-structs               | `Object`       | `any`
+| Borsh                 | Java           | TypeScript     |
+|-----------------------|----------------|----------------|
+ | `u8` integer          | `byte`         | `number`       |
+ | `u16` integer         | `short`        | `number`       |
+ | `u32` integer         | `int`          | `number`       |
+ | `u64` integer         | `long`         | `BN`           |
+ | `u128` integer        | [`BigInteger`] | `BN`           |
+ | `f32` float           | `float`        | N/A            |
+ | `f64` float           | `double`       | N/A            |
+ | fixed-size byte array | `byte[]`       | `Uint8Array`   |
+ | UTF-8 string          | `String`       | `string`       |
+ | option                | [`Optional`]   | `null` or type |
+ | map                   | [`Map`]        | N/A            |
+ | set                   | [`Set`]        | N/A            |
+ | structs               | `Object`       | `any`          |
 
 ## Frequently Asked Questions
 

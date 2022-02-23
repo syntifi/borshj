@@ -3,6 +3,11 @@
 
 # Visual Studio Code
 .vscode/
+# VS Code artifacts
+.classpath
+.project
+.settings/
+bin/
 
 # Editor backup files
 *~
@@ -14,9 +19,5 @@
 .gradle/
 build/
 
-# VS Code artifacts
-.classpath
-.project
-.settings/
-.vscode/
-bin/
+# intellij
+.idea
