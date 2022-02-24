@@ -5,10 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.SortedSet;
+import java.util.*;
 
 import com.syntifi.near.borshj.annotation.BorshFields;
 import com.syntifi.near.borshj.exception.BorshException;
@@ -52,11 +49,13 @@ public interface BorshOutput<S> {
         } else if (object instanceof String) {
             return this.writeString((String) object);
         } else if (object instanceof List) {
-            return this.writeArray((List<?>) object);
+            return this.writeGenericArray((List<?>) object);
         } else if (object instanceof byte[]) {
             return this.writeFixedArray((byte[]) object);
         } else if (object instanceof Optional) {
             return this.writeOptional((Optional<?>) object);
+        } else if (object instanceof Map) {
+            return this.writeGenericMap((Map<?, ?>) object);
         } else if (object instanceof Borsh) {
             return this.writePOJO(object);
         }
@@ -65,7 +64,7 @@ public interface BorshOutput<S> {
 
     /**
      * Writes a Borsh POJO to buffer
-     * 
+     *
      * @param object
      * @return the calling BorshOutput instance
      */
@@ -239,7 +238,7 @@ public interface BorshOutput<S> {
      */
     @SuppressWarnings("unchecked")
     @NonNull
-    default <T> S writeArray(@NonNull final T[] array) {
+    default <T> S writeGenericArray(@NonNull final T[] array) {
         this.writeU32(array.length);
         for (final T element : array) {
             this.write(element);
@@ -256,10 +255,28 @@ public interface BorshOutput<S> {
      */
     @SuppressWarnings("unchecked")
     @NonNull
-    default <T> S writeArray(@NonNull final Collection<T> collection) {
+    default <T> S writeGenericArray(@NonNull final Collection<T> collection) {
         this.writeU32(collection.size());
         for (final T element : collection) {
             this.write(element);
+        }
+        return (S) this;
+    }
+
+    /**
+     * Writes a Map
+     *
+     * @param map the map to write
+     * @param <K> key parameter class
+     * @param <V> value parameter class
+     * @return the calling BorshOutput instance
+     */
+    @SuppressWarnings("unchecked")
+    default <K, V> S writeGenericMap(@NonNull final Map<K, V> map) {
+        this.writeU32(map.size());
+        for (final Map.Entry<K, V> element : map.entrySet()) {
+            this.write(element.getKey());
+            this.write(element.getValue());
         }
         return (S) this;
     }

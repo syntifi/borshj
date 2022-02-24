@@ -6,7 +6,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * Static methods to sort the fields 
+ * Static methods to sort the fields
  *
  * @author Alexandre Carvalho
  * @author Andre Bertolace
@@ -14,10 +14,11 @@ import java.util.TreeSet;
  */
 public class BorshFields {
 
-    private BorshFields(){};
+    private BorshFields() {
+    }
 
     /**
-     *  Exclude transient fields and sort them
+     * Exclude transient fields and sort them
      *
      * @param fields fields to filter and sort
      * @return sorted fields

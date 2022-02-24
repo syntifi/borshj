@@ -1,23 +1,15 @@
 package com.syntifi.near.borshj;
 
-import static java.util.Objects.requireNonNull;
-
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.SortedSet;
-
+import androidx.annotation.NonNull;
 import com.syntifi.near.borshj.annotation.BorshFields;
 import com.syntifi.near.borshj.exception.BorshException;
 
-import androidx.annotation.NonNull;
+import java.lang.reflect.*;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Interface with default implementations for input bytes/reading data
@@ -69,8 +61,8 @@ public interface BorshInput {
      *
      * @param clazz          the generic class
      * @param parameterClass clazz parameter class
-     * @param <T> object class type
-     * @param <P> parameter class type
+     * @param <T>            object class type
+     * @param <P>            parameter class type
      * @return the data mapped to the type of Generic of T.
      */
     @SuppressWarnings("unchecked")
@@ -81,6 +73,26 @@ public interface BorshInput {
             return (T) this.readOptional(parameterClass);
         } else if (Collection.class.isAssignableFrom(clazz)) {
             return (T) this.readGenericArray(parameterClass);
+        }
+        throw new IllegalArgumentException();
+    }
+
+    /**
+     *
+     * @param clazz
+     * @param parameterClassK
+     * @param parameterClassV
+     * @param <T>
+     * @param <K>
+     * @param <V>
+     * @return
+     */
+    default <T, K, V> T read(final @NonNull Class<T> clazz, final @NonNull Class<K> parameterClassK, final @NonNull Class<V> parameterClassV) {
+        requireNonNull(clazz);
+        requireNonNull(parameterClassK);
+        requireNonNull(parameterClassV);
+        if (Map.class.isAssignableFrom(clazz)) {
+            return (T) this.readGenericMap(parameterClassK, parameterClassV);
         }
         throw new IllegalArgumentException();
     }
@@ -100,7 +112,7 @@ public interface BorshInput {
                 field.setAccessible(true);
                 final Class<?> fieldClass = field.getType();
                 // Is generic type?
-                if (fieldClass.getTypeParameters().length > 0) {
+                if (fieldClass.getTypeParameters().length == 1) {
                     final Type fieldType = field.getGenericType();
                     if (!(fieldType instanceof ParameterizedType)) {
                         throw new AssertionError("unsupported Generic type");
@@ -109,6 +121,16 @@ public interface BorshInput {
                     assert (typeArgs.length == 1);
                     final Class<?> parameterClass = (Class<?>) typeArgs[0];
                     field.set(object, this.read(fieldClass, parameterClass));
+                } else if (fieldClass.getTypeParameters().length == 2) {
+                    final Type fieldType = field.getGenericType();
+                    if (!(fieldType instanceof ParameterizedType)) {
+                        throw new AssertionError("unsupported Generic type");
+                    }
+                    final Type[] typeArgs = ((ParameterizedType) fieldType).getActualTypeArguments();
+                    assert (typeArgs.length == 2);
+                    final Class<?> parameterClassK = (Class<?>) typeArgs[0];
+                    final Class<?> parameterClassV = (Class<?>) typeArgs[1];
+                    field.set(object, this.read(fieldClass, parameterClassK, parameterClassV));
                 } else if (fieldClass == byte[].class) {
                     field.set(object, this.readFixedArray(Array.getLength(field.get(object))));
                 } else {
@@ -256,6 +278,26 @@ public interface BorshInput {
         elements = new LinkedList<>();
         for (int i = 0; i < length; i++) {
             elements.add(this.read(parameterClass));
+        }
+        return elements;
+    }
+
+    /**
+     * Reads a Map
+     *
+     * @param parameterClassK the class type of key parameter
+     * @param parameterClassV the class type of value parameter
+     * @param <K>             key parameter class
+     * @param <V>             value parameter class
+     * @return
+     */
+    @NonNull
+    default <K, V> Map<K, V> readGenericMap(@NonNull final Class<K> parameterClassK, @NonNull final Class<V> parameterClassV) {
+        final int length = this.readU32();
+        Map<K, V> elements;
+        elements = new HashMap();
+        for (int i = 0; i < length; i++) {
+            elements.put(this.read(parameterClassK), this.read(parameterClassV));
         }
         return elements;
     }

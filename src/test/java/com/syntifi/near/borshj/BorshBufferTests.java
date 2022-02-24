@@ -1,15 +1,14 @@
 package com.syntifi.near.borshj;
 
 import com.syntifi.near.borshj.pojo.BorshWithCollection;
+import com.syntifi.near.borshj.pojo.BorshWithMap;
 import com.syntifi.near.borshj.pojo.BorshWithOptional;
 import com.syntifi.near.borshj.pojo.PlayerAccount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -120,6 +119,21 @@ public class BorshBufferTests {
         assertEquals(Arrays.asList(1, 2, 3),
                 BorshBuffer.wrap(new byte[]{3, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0})
                         .read(ArrayList.class, Integer.class));
+    }
+
+    @Test
+    void readBorshWithMapPOJO() {
+        final byte[] input = new byte[]{3, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 'B', 'o', 'r', 's', 'h', 2, 0, 0, 0, 2, 0, 0, 0, 'i', 's', 3, 0, 0, 0, 4, 0, 0, 0, 'C', 'o', 'o', 'l'};
+
+        buffer = BorshBuffer.wrap(input);
+        BorshWithMap readObject = buffer.read(BorshWithMap.class);
+
+        Map<Integer, String> testMap = new TreeMap<>();
+        testMap.put(1, "Borsh");
+        testMap.put(2, "is");
+        testMap.put(3, "Cool");
+
+        assertEquals(new BorshWithMap(testMap), readObject);
     }
 
     @Test
@@ -234,7 +248,7 @@ public class BorshBufferTests {
 
     @Test
     void writeArray() {
-        buffer.writeArray(new Short[]{1, 2, 3});
+        buffer.writeGenericArray(new Short[]{1, 2, 3});
         final byte[] expected = new byte[]{3, 0, 0, 0, 1, 0, 2, 0, 3, 0};
         final byte[] actual = buffer.toByteArray();
         assertArrayEquals(expected, actual);
@@ -242,7 +256,7 @@ public class BorshBufferTests {
 
     @Test
     void writeArrayOfList() {
-        buffer.writeArray(Arrays.asList(new Short[]{1, 2, 3}));
+        buffer.writeGenericArray(Arrays.asList(new Short[]{1, 2, 3}));
         final byte[] expected = new byte[]{3, 0, 0, 0, 1, 0, 2, 0, 3, 0};
         final byte[] actual = buffer.toByteArray();
         assertArrayEquals(expected, actual);
@@ -276,6 +290,21 @@ public class BorshBufferTests {
         buffer.write(new BorshWithOptional(Optional.of("A")));
 
         final byte[] expected = new byte[]{1, 1, 0, 0, 0, 65};
+
+        final byte[] actual = buffer.toByteArray();
+
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void writeBorshWithMapPOJO() {
+        Map<Integer, String> testMap = new TreeMap<>();
+        testMap.put(1, "Borsh");
+        testMap.put(2, "is");
+        testMap.put(3, "Cool");
+        buffer.write(new BorshWithMap(testMap));
+
+        final byte[] expected = new byte[]{3, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 'B', 'o', 'r', 's', 'h', 2, 0, 0, 0, 2, 0, 0, 0, 'i', 's', 3, 0, 0, 0, 4, 0, 0, 0, 'C', 'o', 'o', 'l'};
 
         final byte[] actual = buffer.toByteArray();
 
