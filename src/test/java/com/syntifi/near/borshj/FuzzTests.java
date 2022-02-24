@@ -1,6 +1,11 @@
 package com.syntifi.near.borshj;
 
-import net.sf.cglib.beans.BeanGenerator;
+import com.syntifi.near.borshj.annotation.BorshOrder;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.description.annotation.AnnotationDescription;
+import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.jar.asm.Opcodes;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Test;
@@ -12,7 +17,6 @@ import java.util.Random;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- *
  * @author Alexandre Carvalho
  * @author Andre Bertolace
  * @since 0.1.0
@@ -24,18 +28,35 @@ public class FuzzTests {
     static final int MAX_STRING_LEN = 100;
 
     @Test
-    void testBeanGenerator() throws Exception {
-        final BeanGenerator beanGenerator = new BeanGenerator();
-        beanGenerator.setSuperclass(Bean.class);
-        beanGenerator.addProperty("name", String.class);
-        beanGenerator.addProperty("email", String.class);
-        beanGenerator.addProperty("age", Integer.class);
-        beanGenerator.addProperty("twitter", Boolean.class);
-        final Object bean = beanGenerator.create();
-        bean.getClass().getMethod("setName", String.class).invoke(bean, "J. Random Hacker");
-        bean.getClass().getMethod("setEmail", String.class).invoke(bean, "jhacker@example.org");
-        bean.getClass().getMethod("setAge", Integer.class).invoke(bean, 42);
-        bean.getClass().getMethod("setTwitter", Boolean.class).invoke(bean, true);
+    void testByteBuddy() throws Exception {
+        final Object bean =
+                new ByteBuddy()
+                        .subclass(Bean.class)
+                        .defineField("name", String.class, Opcodes.ACC_PUBLIC)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
+                                .define("order", 1)
+                                .build())
+                        .defineField("email", String.class, Opcodes.ACC_PUBLIC)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
+                                .define("order", 2)
+                                .build())
+                        .defineField("age", Integer.class, Opcodes.ACC_PUBLIC)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
+                                .define("order", 3)
+                                .build())
+                        .defineField("twitter", Boolean.class, Opcodes.ACC_PUBLIC)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
+                                .define("order", 4)
+                                .build())
+                        .make()
+                        .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+                        .getLoaded()
+                        .getDeclaredConstructor()
+                        .newInstance();
+        bean.getClass().getField("name").set(bean, "J. Random Hacker");
+        bean.getClass().getField("email").set(bean, "jhacker@example.org");
+        bean.getClass().getField("age").set(bean, 42);
+        bean.getClass().getField("twitter").set(bean, true);
         assertEquals(bean, Borsh.deserialize(Borsh.serialize(bean), bean.getClass()));
     }
 
@@ -47,19 +68,33 @@ public class FuzzTests {
     }
 
     private Object newRandomBean(final Random random, final int level) throws Exception {
-        final BeanGenerator beanGenerator = new BeanGenerator();
-        beanGenerator.setSuperclass(Bean.class);
+        DynamicType.Builder<Bean> beanBuilder = new ByteBuddy().subclass(Bean.class);
+
         final int fieldCount = random.nextInt(MAX_FIELDS);
         final Object[] fieldValues = new Object[fieldCount];
         for (int i = 0; i < fieldCount; i++) {
             final String fieldName = String.format("field%d", i);
             fieldValues[i] = newRandomValue(random, level);
-            beanGenerator.addProperty(fieldName, fieldValues[i].getClass());
+            beanBuilder = beanBuilder
+                    .defineField(fieldName, fieldValues[i].getClass(), Opcodes.ACC_PUBLIC)
+                    .annotateField(
+                            AnnotationDescription.Builder
+                                    .ofType(BorshOrder.class)
+                                    .define("order", i + 1)
+                                    .build());
         }
-        final Object bean = beanGenerator.create();
-        for (int i = 0; i < fieldCount; i++) {
-            final String setterName = String.format("setField%d", i);
-            bean.getClass().getMethod(setterName, fieldValues[i].getClass()).invoke(bean, fieldValues[i]);
+
+        final Object bean = beanBuilder
+                .make()
+                .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+                .getLoaded()
+                .getDeclaredConstructor()
+                .newInstance();
+
+        Class<?> beanClass = bean.getClass();
+        for (int j = 0; j < fieldCount; j++) {
+            final String fieldName = String.format("field%d", j);
+            beanClass.getField(fieldName).set(bean, fieldValues[j]);
         }
         //System.err.println(bean.toString());  // DEBUG
         return bean;

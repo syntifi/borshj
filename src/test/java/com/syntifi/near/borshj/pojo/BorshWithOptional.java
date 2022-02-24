@@ -1,10 +1,13 @@
 package com.syntifi.near.borshj.pojo;
 
-import com.syntifi.near.borshj.Borsh;
-
 import java.util.Optional;
 
+import com.syntifi.near.borshj.Borsh;
+import com.syntifi.near.borshj.annotation.BorshOrder;
+
 public class BorshWithOptional implements Borsh {
+
+    @BorshOrder(order = 1)
     public final Optional<String> optional;
 
     public BorshWithOptional() {
@@ -34,6 +37,7 @@ public class BorshWithOptional implements Borsh {
         BorshWithOptional other = (BorshWithOptional) obj;
         if (!optional.isPresent()) {
             return !other.optional.isPresent();
-        } else return optional.equals(other.optional);
+        } else
+            return optional.equals(other.optional);
     }
 }

@@ -1,11 +1,13 @@
 package com.syntifi.near.borshj.pojo;
 
-import com.syntifi.near.borshj.Borsh;
-
 import java.util.Collection;
 import java.util.LinkedList;
 
+import com.syntifi.near.borshj.Borsh;
+import com.syntifi.near.borshj.annotation.BorshOrder;
+
 public class BorshWithCollection implements Borsh {
+    @BorshOrder
     public final Collection<String> collection;
 
     public BorshWithCollection() {
@@ -35,7 +37,8 @@ public class BorshWithCollection implements Borsh {
         BorshWithCollection other = (BorshWithCollection) obj;
         if (collection == null) {
             return other.collection == null;
-        } else return collection.equals(other.collection);
+        } else
+            return collection.equals(other.collection);
     }
 
 }

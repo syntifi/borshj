@@ -1,9 +1,13 @@
 package com.syntifi.near.borshj.pojo;
 
 import com.syntifi.near.borshj.Borsh;
+import com.syntifi.near.borshj.annotation.BorshOrder;
 
 public class Point2Df implements Borsh {
+    @BorshOrder(order = 1)
     private float x;
+
+    @BorshOrder(order = 2)
     private float y;
 
     public Point2Df() {
@@ -21,7 +25,8 @@ public class Point2Df implements Borsh {
 
     @Override
     public boolean equals(final Object object) {
-        if (object == null || object.getClass() != this.getClass()) return false;
+        if (object == null || object.getClass() != this.getClass())
+            return false;
         final Point2Df other = (Point2Df) object;
         return this.x == other.x && this.y == other.y;
     }

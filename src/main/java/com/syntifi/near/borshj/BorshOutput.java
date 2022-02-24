@@ -1,17 +1,19 @@
 package com.syntifi.near.borshj;
 
-import androidx.annotation.NonNull;
-import com.syntifi.near.borshj.exception.BorshException;
+import static java.util.Objects.requireNonNull;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.SortedSet;
 
-import static java.util.Objects.requireNonNull;
+import com.syntifi.near.borshj.annotation.BorshFields;
+import com.syntifi.near.borshj.exception.BorshException;
+
+import androidx.annotation.NonNull;
 
 /**
  * Interface with default implementations for input bytes/reading data
@@ -62,19 +64,17 @@ public interface BorshOutput<S> {
     }
 
     /**
-     * Writes a POJO to buffer
-     *
-     * @param object POJO object that implements {@link Borsh}
+     * Writes a Borsh POJO to buffer
+     * 
+     * @param object
      * @return the calling BorshOutput instance
      */
     @SuppressWarnings("unchecked")
     @NonNull
     default S writePOJO(@NonNull final Object object) {
         try {
-            for (final Field field : object.getClass().getDeclaredFields()) {
-                if (Modifier.isTransient(field.getModifiers())) {
-                    continue;
-                }
+            SortedSet<Field> fields = BorshFields.filterAndSort(object.getClass().getDeclaredFields());
+            for (final Field field : fields) {
                 field.setAccessible(true);
                 this.write(field.get(object));
             }
@@ -234,7 +234,7 @@ public interface BorshOutput<S> {
      * Writes an array of type T
      *
      * @param array the array of type T to write
-     * @param <T> type of array item
+     * @param <T>   type of array item
      * @return the calling BorshOutput instance
      */
     @SuppressWarnings("unchecked")
@@ -251,7 +251,7 @@ public interface BorshOutput<S> {
      * Writes a Collection
      *
      * @param collection the collection to write
-     * @param <T> the collection parameter type
+     * @param <T>        the collection parameter type
      * @return the calling BorshOutput instance
      */
     @SuppressWarnings("unchecked")
@@ -299,7 +299,7 @@ public interface BorshOutput<S> {
      */
     @NonNull
     default S writeBuffer(@NonNull final BorshBuffer buffer) {
-        return this.write(buffer.toByteArray());  // TODO: optimize
+        return this.write(buffer.toByteArray()); // TODO: optimize
     }
 
     /**

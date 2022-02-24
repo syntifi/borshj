@@ -28,9 +28,9 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 
-    // See: https://github.com/cglib/cglib/releases
-    // See: https://mvnrepository.com/artifact/cglib/cglib
-    testImplementation 'cglib:cglib:3.3.0'
+    // See: https://github.com/raphw/byte-buddy/releases
+    // See: https://search.maven.org/artifact/net.bytebuddy/byte-buddy/1.12.8/jar
+    testImplementation "net.bytebuddy:byte-buddy:1.12.8"
 }
 
 test {
