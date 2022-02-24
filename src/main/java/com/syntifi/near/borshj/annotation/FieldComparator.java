@@ -3,6 +3,13 @@ package com.syntifi.near.borshj.annotation;
 import java.lang.reflect.Field;
 import java.util.Comparator;
 
+/**
+ * Comparator to sort the object's fields according to the BorshOrder annotation 
+ *
+ * @author Alexandre Carvalho
+ * @author Andre Bertolace
+ * @since 0.1.0
+ */
 public class FieldComparator implements Comparator<Field> {
 
     public int compare(Field f1, Field f2) {
