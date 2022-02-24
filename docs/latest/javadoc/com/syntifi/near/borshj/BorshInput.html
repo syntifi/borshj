@@ -217,7 +217,7 @@ var activeTableTab = "activeTableTab";
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>default &lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readPOJO-java.lang.Class-">readPOJO</a></span>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
-<div class="block">Reads into a POJO</div>
+<div class="block">Reads into a Borsh POJO</div>
 </td>
 </tr>
 <tr id="i15" class="rowColor">
@@ -303,8 +303,8 @@ var activeTableTab = "activeTableTab";
 <div class="block">Reads a value for a Generic type</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
-<dd><code>T</code> - </dd>
-<dd><code>P</code> - </dd>
+<dd><code>T</code> - object class type</dd>
+<dd><code>P</code> - parameter class type</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>clazz</code> - the generic class</dd>
 <dd><code>parameterClass</code> - clazz parameter class</dd>
@@ -321,14 +321,14 @@ var activeTableTab = "activeTableTab";
 <h4>readPOJO</h4>
 <pre>default&nbsp;&lt;T&gt;&nbsp;T&nbsp;readPOJO(@NonNull
                        java.lang.Class&lt;T&gt;&nbsp;clazz)</pre>
-<div class="block">Reads into a POJO</div>
+<div class="block">Reads into a Borsh POJO</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
-<dd><code>T</code> - type of POJO class</dd>
+<dd><code>T</code> - type of Borsh POJO class</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>clazz</code> - POJO class</dd>
+<dd><code>clazz</code> - Borsh POJO class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>POJO instance with its data</dd>
+<dd>Borsh POJO instance with its data</dd>
 </dl>
 </li>
 </ul>
