@@ -11,4 +11,8 @@ public class BorshException extends RuntimeException {
     public BorshException(Throwable t) {
         super(t);
     }
+
+    public BorshException(String msg) {
+        super(msg);
+    }
 }

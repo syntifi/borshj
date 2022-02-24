@@ -1,16 +1,24 @@
 package com.syntifi.near.borshj;
 
-import androidx.annotation.NonNull;
-import com.syntifi.near.borshj.exception.BorshException;
+import static java.util.Objects.requireNonNull;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.SortedSet;
 
-import static java.util.Objects.requireNonNull;
+import com.syntifi.near.borshj.annotation.BorshFields;
+import com.syntifi.near.borshj.exception.BorshException;
+
+import androidx.annotation.NonNull;
 
 /**
  * Interface with default implementations for input bytes/reading data
@@ -79,16 +87,17 @@ public interface BorshInput {
     }
 
     /**
-     * Reads into a POJO
+     * Reads into a Borsh POJO
      *
-     * @param clazz POJO class
-     * @param <T>   type of POJO class
-     * @return POJO instance with its data
+     * @param clazz Borsh POJO class
+     * @param <T>   type of Borsh POJO class
+     * @return Borsh POJO instance with its data
      */
     default <T> T readPOJO(@NonNull final Class<T> clazz) {
         try {
             final T object = clazz.getConstructor().newInstance();
-            for (final Field field : clazz.getDeclaredFields()) {
+            SortedSet<Field> fields = BorshFields.sort(object.getClass().getDeclaredFields());
+            for (final Field field : fields) {
                 if (Modifier.isTransient(field.getModifiers())) {
                     continue;
                 }
@@ -111,10 +120,12 @@ public interface BorshInput {
                 }
             }
             return object;
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException error) {
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
+                | InvocationTargetException error) {
             throw new BorshException(error);
         }
     }
+
 
     /**
      * Read data as U8
