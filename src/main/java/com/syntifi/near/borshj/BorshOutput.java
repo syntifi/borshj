@@ -66,7 +66,7 @@ public interface BorshOutput<S> {
     /**
      * Writes a Borsh POJO to buffer
      * 
-     * @param Borsh POJO object that implements {@link Borsh}
+     * @param object
      * @return the calling BorshOutput instance
      */
     @SuppressWarnings("unchecked")

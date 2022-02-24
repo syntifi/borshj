@@ -69,8 +69,8 @@ public interface BorshInput {
      *
      * @param clazz          the generic class
      * @param parameterClass clazz parameter class
-     * @param <T>
-     * @param <P>
+     * @param <T> object class type
+     * @param <P> parameter class type
      * @return the data mapped to the type of Generic of T.
      */
     @SuppressWarnings("unchecked")
