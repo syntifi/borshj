@@ -49,7 +49,7 @@ public class FuzzTests {
                                 .define("order", 4)
                                 .build())
                         .make()
-                        .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
+                        .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
                         .getLoaded()
                         .getDeclaredConstructor()
                         .newInstance();
@@ -75,22 +75,26 @@ public class FuzzTests {
         for (int i = 0; i < fieldCount; i++) {
             final String fieldName = String.format("field%d", i);
             fieldValues[i] = newRandomValue(random, level);
-            beanBuilder = beanBuilder.defineField(fieldName, fieldValues[i].getClass(), Opcodes.ACC_PUBLIC)
-                    .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
-                            .define("order", i + 1)
-                            .build());
+            beanBuilder = beanBuilder
+                    .defineField(fieldName, fieldValues[i].getClass(), Opcodes.ACC_PUBLIC)
+                    .annotateField(
+                            AnnotationDescription.Builder
+                                    .ofType(BorshOrder.class)
+                                    .define("order", i + 1)
+                                    .build());
         }
 
         final Object bean = beanBuilder
                 .make()
-                .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
+                .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
                 .getLoaded()
                 .getDeclaredConstructor()
                 .newInstance();
 
+        Class<?> beanClass = bean.getClass();
         for (int j = 0; j < fieldCount; j++) {
             final String fieldName = String.format("field%d", j);
-            bean.getClass().getField(fieldName).set(bean, fieldValues[j]);
+            beanClass.getField(fieldName).set(bean, fieldValues[j]);
         }
         //System.err.println(bean.toString());  // DEBUG
         return bean;
