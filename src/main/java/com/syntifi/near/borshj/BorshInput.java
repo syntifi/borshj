@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
@@ -96,11 +95,8 @@ public interface BorshInput {
     default <T> T readPOJO(@NonNull final Class<T> clazz) {
         try {
             final T object = clazz.getConstructor().newInstance();
-            SortedSet<Field> fields = BorshFields.sort(object.getClass().getDeclaredFields());
+            SortedSet<Field> fields = BorshFields.filterAndSort(object.getClass().getDeclaredFields());
             for (final Field field : fields) {
-                if (Modifier.isTransient(field.getModifiers())) {
-                    continue;
-                }
                 field.setAccessible(true);
                 final Class<?> fieldClass = field.getType();
                 // Is generic type?

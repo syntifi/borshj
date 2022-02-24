@@ -1,7 +1,7 @@
 package com.syntifi.near.borshj.annotation;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
+import java.lang.reflect.Modifier;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -16,10 +16,19 @@ public class BorshFields {
 
     private BorshFields(){};
 
-    public static SortedSet<Field> sort(Field[] fields) {
+    /**
+     *  Exclude transient fields and sort them
+     *
+     * @param fields fields to filter and sort
+     * @return sorted fields
+     */
+    public static SortedSet<Field> filterAndSort(Field[] fields) {
         SortedSet<Field> sortedFields = new TreeSet<Field>(new FieldComparator());
-        sortedFields.addAll(Arrays.asList(fields));
+        for (Field field : fields) {
+            if (!Modifier.isTransient(field.getModifiers())) {
+                sortedFields.add(field);
+            }
+        }
         return sortedFields;
     }
-
 }

@@ -3,7 +3,6 @@ package com.syntifi.near.borshj;
 import static java.util.Objects.requireNonNull;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -74,11 +73,8 @@ public interface BorshOutput<S> {
     @NonNull
     default S writePOJO(@NonNull final Object object) {
         try {
-            SortedSet<Field> fields = BorshFields.sort(object.getClass().getDeclaredFields());
+            SortedSet<Field> fields = BorshFields.filterAndSort(object.getClass().getDeclaredFields());
             for (final Field field : fields) {
-                if (Modifier.isTransient(field.getModifiers())) {
-                    continue;
-                }
                 field.setAccessible(true);
                 this.write(field.get(object));
             }
