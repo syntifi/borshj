@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":18,"i2":6,"i3":18,"i4":18,"i5":18,"i6":18,"i7":18,"i8":18,"i9":18,"i10":18,"i11":18,"i12":18,"i13":18,"i14":18,"i15":18,"i16":18,"i17":18,"i18":18,"i19":18,"i20":18};
+var methods = {"i0":6,"i1":18,"i2":6,"i3":18,"i4":18,"i5":18,"i6":18,"i7":18,"i8":18,"i9":18,"i10":18,"i11":18,"i12":18,"i13":18,"i14":18,"i15":18,"i16":18,"i17":18,"i18":18,"i19":18,"i20":18,"i21":18,"i22":18,"i23":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -154,103 +154,124 @@ var activeTableTab = "activeTableTab";
 </td>
 </tr>
 <tr id="i4" class="altColor">
+<td class="colFirst"><code>default &lt;T,K,V&gt;&nbsp;T</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#read-java.lang.Class-java.lang.Class-java.lang.Class-">read</a></span>(java.lang.Class&lt;T&gt;&nbsp;clazz,
+    java.lang.Class&lt;K&gt;&nbsp;parameterClassK,
+    java.lang.Class&lt;V&gt;&nbsp;parameterClassV)</code>
+<div class="block">Reads a value for a key/value type</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>default &lt;T,P&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#read-java.lang.Class-java.lang.Class-">read</a></span>(java.lang.Class&lt;T&gt;&nbsp;clazz,
     java.lang.Class&lt;P&gt;&nbsp;parameterClass)</code>
 <div class="block">Reads a value for a Generic type</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>default byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#read-int-">read</a></span>(int&nbsp;length)</code>
 <div class="block">Reads a byte array</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>default &lt;T&gt;&nbsp;T[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readArray-java.lang.Class-">readArray</a></span>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
 <div class="block">Reads array to array of T</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>default boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readBoolean--">readBoolean</a></span>()</code>
 <div class="block">Reads a boolean</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>default float</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readF32--">readF32</a></span>()</code>
 <div class="block">Read data as F32</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>default double</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readF64--">readF64</a></span>()</code>
 <div class="block">Read data as F64</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>default byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readFixedArray-int-">readFixedArray</a></span>(int&nbsp;length)</code>
 <div class="block">Read data as FixedArray</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>default &lt;T&gt;&nbsp;java.util.Collection&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readGenericArray-java.lang.Class-">readGenericArray</a></span>(java.lang.Class&lt;T&gt;&nbsp;parameterClass)</code>
 <div class="block">Reads a Generic Array</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>default &lt;K,V&gt;&nbsp;java.util.Map&lt;K,V&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readGenericMap-java.lang.Class-java.lang.Class-">readGenericMap</a></span>(java.lang.Class&lt;K&gt;&nbsp;parameterClassK,
+              java.lang.Class&lt;V&gt;&nbsp;parameterClassV)</code>
+<div class="block">Reads a Map</div>
+</td>
+</tr>
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>default &lt;T&gt;&nbsp;java.util.Optional&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readOptional--">readOptional</a></span>()</code>
 <div class="block">Reads an optional</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>default &lt;T&gt;&nbsp;java.util.Optional&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readOptional-java.lang.Class-">readOptional</a></span>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
 <div class="block">Reads an optional</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>default &lt;T&gt;&nbsp;T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readPOJO-java.lang.Class-">readPOJO</a></span>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
 <div class="block">Reads into a Borsh POJO</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>default java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readString--">readString</a></span>()</code>
 <div class="block">Read data as String</div>
 </td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i18" class="altColor">
+<td class="colFirst"><code>default &lt;T&gt;&nbsp;java.lang.Object</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readSubType-java.lang.Class-">readSubType</a></span>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
+<div class="block">Reads a target object which inherits from given interface</div>
+</td>
+</tr>
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>default java.math.BigInteger</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readU128--">readU128</a></span>()</code>
 <div class="block">Read data as U128</div>
 </td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>default short</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readU16--">readU16</a></span>()</code>
 <div class="block">Read data as U16</div>
 </td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>default int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readU32--">readU32</a></span>()</code>
 <div class="block">Read data as U32</div>
 </td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>default long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readU64--">readU64</a></span>()</code>
 <div class="block">Read data as U64</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>default byte</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/syntifi/near/borshj/BorshInput.html#readU8--">readU8</a></span>()</code>
 <div class="block">Read data as U8</div>
@@ -313,6 +334,33 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
+<a name="read-java.lang.Class-java.lang.Class-java.lang.Class-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>default&nbsp;&lt;T,K,V&gt;&nbsp;T&nbsp;read(@NonNull
+                       java.lang.Class&lt;T&gt;&nbsp;clazz,
+                       @NonNull
+                       java.lang.Class&lt;K&gt;&nbsp;parameterClassK,
+                       @NonNull
+                       java.lang.Class&lt;V&gt;&nbsp;parameterClassV)</pre>
+<div class="block">Reads a value for a key/value type</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - the type of key/value class object</dd>
+<dd><code>K</code> - the type of key parameter</dd>
+<dd><code>V</code> - the type of value parameter</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>clazz</code> - the key/value type class object</dd>
+<dd><code>parameterClassK</code> - the parameter class object of key type</dd>
+<dd><code>parameterClassV</code> - the parameter class object of value type</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the map object with its data</dd>
+</dl>
+</li>
+</ul>
 <a name="readPOJO-java.lang.Class-">
 <!--   -->
 </a>
@@ -329,6 +377,24 @@ var activeTableTab = "activeTableTab";
 <dd><code>clazz</code> - Borsh POJO class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Borsh POJO instance with its data</dd>
+</dl>
+</li>
+</ul>
+<a name="readSubType-java.lang.Class-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>readSubType</h4>
+<pre>default&nbsp;&lt;T&gt;&nbsp;java.lang.Object&nbsp;readSubType(java.lang.Class&lt;T&gt;&nbsp;clazz)</pre>
+<div class="block">Reads a target object which inherits from given interface</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - type of interface</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>clazz</code> - the interface which should hold subtype mapping</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the subtype data read</dd>
 </dl>
 </li>
 </ul>
@@ -500,6 +566,30 @@ default&nbsp;&lt;T&gt;&nbsp;java.util.Collection&lt;T&gt;&nbsp;readGenericArray(
 <dd><code>parameterClass</code> - the parametrization class</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the collection with items of type T with its data read</dd>
+</dl>
+</li>
+</ul>
+<a name="readGenericMap-java.lang.Class-java.lang.Class-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>readGenericMap</h4>
+<pre>@NonNull
+default&nbsp;&lt;K,V&gt;&nbsp;java.util.Map&lt;K,V&gt;&nbsp;readGenericMap(@NonNull
+                                                         java.lang.Class&lt;K&gt;&nbsp;parameterClassK,
+                                                         @NonNull
+                                                         java.lang.Class&lt;V&gt;&nbsp;parameterClassV)</pre>
+<div class="block">Reads a Map</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>K</code> - key parameter class</dd>
+<dd><code>V</code> - value parameter class</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>parameterClassK</code> - the class type of key parameter</dd>
+<dd><code>parameterClassV</code> - the class type of value parameter</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the map object with its data</dd>
 </dl>
 </li>
 </ul>
