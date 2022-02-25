@@ -1,3 +1,5 @@
 com.syntifi.near.borshj
 com.syntifi.near.borshj.annotation
+com.syntifi.near.borshj.comparator
 com.syntifi.near.borshj.exception
+com.syntifi.near.borshj.util
