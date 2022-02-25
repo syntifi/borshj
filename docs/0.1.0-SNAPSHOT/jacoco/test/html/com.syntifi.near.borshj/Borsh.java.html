@@ -55,11 +55,11 @@ public interface Borsh {
      * @return true if it is serializable
      */
     static boolean isSerializable(@Nullable final Class&lt;?&gt; clazz) {
-<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (clazz == null) {</span>
-<span class="fc" id="L59">            return false;</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (clazz == null) {</span>
+<span class="nc" id="L59">            return false;</span>
         }
-<span class="fc bfc" id="L61" title="All 4 branches covered.">        return Arrays.stream(clazz.getInterfaces()).anyMatch(i -&gt; i == Borsh.class) ||</span>
-<span class="fc bfc" id="L62" title="All 2 branches covered.">                isSerializable(clazz.getSuperclass());</span>
+<span class="nc bnc" id="L61" title="All 4 branches missed.">        return Arrays.stream(clazz.getInterfaces()).anyMatch(i -&gt; i == Borsh.class) ||</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">                isSerializable(clazz.getSuperclass());</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

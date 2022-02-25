@@ -1,23 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BorshInput.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">borshj</a> &gt; <a href="index.source.html" class="el_package">com.syntifi.near.borshj</a> &gt; <span class="el_source">BorshInput.java</span></div><h1>BorshInput.java</h1><pre class="source lang-java linenums">package com.syntifi.near.borshj;
 
-import static java.util.Objects.requireNonNull;
+import androidx.annotation.NonNull;
+import com.syntifi.near.borshj.annotation.BorshSubTypes;
+import com.syntifi.near.borshj.exception.BorshException;
+import com.syntifi.near.borshj.util.BorshUtil;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.SortedSet;
+import java.util.*;
 
-import com.syntifi.near.borshj.annotation.BorshFields;
-import com.syntifi.near.borshj.exception.BorshException;
-
-import androidx.annotation.NonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Interface with default implementations for input bytes/reading data
@@ -26,7 +19,7 @@ import androidx.annotation.NonNull;
  * @author Andre Bertolace
  * @since 0.1.0
  */
-<span class="pc bpc" id="L29" title="1 of 2 branches missed.">public interface BorshInput {</span>
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">public interface BorshInput {</span>
 
     /**
      * Reads from buffer to specified type of clazz
@@ -37,31 +30,33 @@ import androidx.annotation.NonNull;
      */
     @SuppressWarnings(&quot;unchecked&quot;)
     default &lt;T&gt; T read(@NonNull final Class&lt;T&gt; clazz) {
-<span class="fc" id="L40">        requireNonNull(clazz);</span>
-<span class="fc bfc" id="L41" title="All 4 branches covered.">        if (clazz == Byte.class || clazz == byte.class) {</span>
-<span class="fc" id="L42">            return (T) Byte.valueOf(this.readU8());</span>
-<span class="pc bpc" id="L43" title="1 of 4 branches missed.">        } else if (clazz == Short.class || clazz == short.class) {</span>
-<span class="fc" id="L44">            return (T) Short.valueOf(this.readU16());</span>
-<span class="pc bpc" id="L45" title="1 of 4 branches missed.">        } else if (clazz == Integer.class || clazz == int.class) {</span>
-<span class="fc" id="L46">            return (T) Integer.valueOf(this.readU32());</span>
-<span class="pc bpc" id="L47" title="1 of 4 branches missed.">        } else if (clazz == Long.class || clazz == long.class) {</span>
-<span class="fc" id="L48">            return (T) Long.valueOf(this.readU64());</span>
-<span class="fc bfc" id="L49" title="All 4 branches covered.">        } else if (clazz == Float.class || clazz == float.class) {</span>
-<span class="fc" id="L50">            return (T) Float.valueOf(this.readF32());</span>
-<span class="pc bpc" id="L51" title="1 of 4 branches missed.">        } else if (clazz == Double.class || clazz == double.class) {</span>
-<span class="fc" id="L52">            return (T) Double.valueOf(this.readF64());</span>
-<span class="pc bpc" id="L53" title="1 of 4 branches missed.">        } else if (clazz == Boolean.class || clazz == boolean.class) {</span>
-<span class="fc" id="L54">            return (T) Boolean.valueOf(this.readBoolean());</span>
-<span class="fc bfc" id="L55" title="All 2 branches covered.">        } else if (clazz == BigInteger.class) {</span>
-<span class="fc" id="L56">            return (T) this.readU128();</span>
-<span class="fc bfc" id="L57" title="All 2 branches covered.">        } else if (clazz == String.class) {</span>
-<span class="fc" id="L58">            return (T) this.readString();</span>
-<span class="fc bfc" id="L59" title="All 2 branches covered.">        } else if (clazz == Optional.class) {</span>
-<span class="fc" id="L60">            return (T) this.readOptional();</span>
-<span class="fc bfc" id="L61" title="All 2 branches covered.">        } else if (Borsh.isSerializable(clazz)) {</span>
-<span class="fc" id="L62">            return this.readPOJO(clazz);</span>
+<span class="fc" id="L33">        requireNonNull(clazz);</span>
+<span class="fc bfc" id="L34" title="All 4 branches covered.">        if (clazz == Byte.class || clazz == byte.class) {</span>
+<span class="fc" id="L35">            return (T) Byte.valueOf(this.readU8());</span>
+<span class="pc bpc" id="L36" title="1 of 4 branches missed.">        } else if (clazz == Short.class || clazz == short.class) {</span>
+<span class="fc" id="L37">            return (T) Short.valueOf(this.readU16());</span>
+<span class="fc bfc" id="L38" title="All 4 branches covered.">        } else if (clazz == Integer.class || clazz == int.class) {</span>
+<span class="fc" id="L39">            return (T) Integer.valueOf(this.readU32());</span>
+<span class="pc bpc" id="L40" title="1 of 4 branches missed.">        } else if (clazz == Long.class || clazz == long.class) {</span>
+<span class="fc" id="L41">            return (T) Long.valueOf(this.readU64());</span>
+<span class="fc bfc" id="L42" title="All 4 branches covered.">        } else if (clazz == Float.class || clazz == float.class) {</span>
+<span class="fc" id="L43">            return (T) Float.valueOf(this.readF32());</span>
+<span class="pc bpc" id="L44" title="1 of 4 branches missed.">        } else if (clazz == Double.class || clazz == double.class) {</span>
+<span class="fc" id="L45">            return (T) Double.valueOf(this.readF64());</span>
+<span class="pc bpc" id="L46" title="1 of 4 branches missed.">        } else if (clazz == Boolean.class || clazz == boolean.class) {</span>
+<span class="fc" id="L47">            return (T) Boolean.valueOf(this.readBoolean());</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        } else if (clazz == BigInteger.class) {</span>
+<span class="fc" id="L49">            return (T) this.readU128();</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">        } else if (clazz == String.class) {</span>
+<span class="fc" id="L51">            return (T) this.readString();</span>
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        } else if (clazz == Optional.class) {</span>
+<span class="fc" id="L53">            return (T) this.readOptional();</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        } else if (clazz.isInterface()) {</span>
+<span class="fc" id="L55">            return (T) this.readSubType(clazz);</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        } else if (com.syntifi.near.borshj.Borsh.class.isAssignableFrom(clazz)) {</span>
+<span class="fc" id="L57">            return this.readPOJO(clazz);</span>
         }
-<span class="fc" id="L64">        throw new IllegalArgumentException();</span>
+<span class="fc" id="L59">        throw new IllegalArgumentException();</span>
     }
 
     /**
@@ -69,20 +64,42 @@ import androidx.annotation.NonNull;
      *
      * @param clazz          the generic class
      * @param parameterClass clazz parameter class
-     * @param &lt;T&gt; object class type
-     * @param &lt;P&gt; parameter class type
+     * @param &lt;T&gt;            object class type
+     * @param &lt;P&gt;            parameter class type
      * @return the data mapped to the type of Generic of T.
      */
     @SuppressWarnings(&quot;unchecked&quot;)
     default &lt;T, P&gt; T read(final @NonNull Class&lt;T&gt; clazz, final @NonNull Class&lt;P&gt; parameterClass) {
-<span class="fc" id="L78">        requireNonNull(clazz);</span>
-<span class="fc" id="L79">        requireNonNull(parameterClass);</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (clazz == Optional.class) {</span>
-<span class="fc" id="L81">            return (T) this.readOptional(parameterClass);</span>
-<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        } else if (Collection.class.isAssignableFrom(clazz)) {</span>
-<span class="fc" id="L83">            return (T) this.readGenericArray(parameterClass);</span>
+<span class="fc" id="L73">        requireNonNull(clazz);</span>
+<span class="fc" id="L74">        requireNonNull(parameterClass);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (clazz == Optional.class) {</span>
+<span class="fc" id="L76">            return (T) this.readOptional(parameterClass);</span>
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        } else if (Collection.class.isAssignableFrom(clazz)) {</span>
+<span class="fc" id="L78">            return (T) this.readGenericArray(parameterClass);</span>
         }
-<span class="nc" id="L85">        throw new IllegalArgumentException();</span>
+<span class="nc" id="L80">        throw new IllegalArgumentException();</span>
+    }
+
+    /**
+     * Reads a value for a key/value type
+     *
+     * @param clazz           the key/value type class object
+     * @param parameterClassK the parameter class object of key type
+     * @param parameterClassV the parameter class object of value type
+     * @param &lt;T&gt;             the type of key/value class object
+     * @param &lt;K&gt;             the type of key parameter
+     * @param &lt;V&gt;             the type of value parameter
+     * @return the map object with its data
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    default &lt;T, K, V&gt; T read(final @NonNull Class&lt;T&gt; clazz, final @NonNull Class&lt;K&gt; parameterClassK, final @NonNull Class&lt;V&gt; parameterClassV) {
+<span class="fc" id="L96">        requireNonNull(clazz);</span>
+<span class="fc" id="L97">        requireNonNull(parameterClassK);</span>
+<span class="fc" id="L98">        requireNonNull(parameterClassV);</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        if (Map.class.isAssignableFrom(clazz)) {</span>
+<span class="fc" id="L100">            return (T) this.readGenericMap(parameterClassK, parameterClassV);</span>
+        }
+<span class="nc" id="L102">        throw new IllegalArgumentException();</span>
     }
 
     /**
@@ -94,34 +111,68 @@ import androidx.annotation.NonNull;
      */
     default &lt;T&gt; T readPOJO(@NonNull final Class&lt;T&gt; clazz) {
         try {
-<span class="fc" id="L97">            final T object = clazz.getConstructor().newInstance();</span>
-<span class="fc" id="L98">            SortedSet&lt;Field&gt; fields = BorshFields.filterAndSort(object.getClass().getDeclaredFields());</span>
-<span class="fc bfc" id="L99" title="All 2 branches covered.">            for (final Field field : fields) {</span>
-<span class="fc" id="L100">                field.setAccessible(true);</span>
-<span class="fc" id="L101">                final Class&lt;?&gt; fieldClass = field.getType();</span>
+<span class="fc" id="L114">            final T object = clazz.getConstructor().newInstance();</span>
+<span class="fc" id="L115">            SortedSet&lt;Field&gt; fields = BorshUtil.filterAndSort(object.getClass().getDeclaredFields());</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">            for (final Field field : fields) {</span>
+<span class="fc" id="L117">                field.setAccessible(true);</span>
+<span class="fc" id="L118">                final Class&lt;?&gt; fieldClass = field.getType();</span>
                 // Is generic type?
-<span class="fc bfc" id="L103" title="All 2 branches covered.">                if (fieldClass.getTypeParameters().length &gt; 0) {</span>
-<span class="fc" id="L104">                    final Type fieldType = field.getGenericType();</span>
-<span class="pc bpc" id="L105" title="1 of 2 branches missed.">                    if (!(fieldType instanceof ParameterizedType)) {</span>
-<span class="nc" id="L106">                        throw new AssertionError(&quot;unsupported Generic type&quot;);</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">                if (fieldClass.getTypeParameters().length == 1) {</span>
+<span class="fc" id="L121">                    final Type fieldType = field.getGenericType();</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">                    if (!(fieldType instanceof ParameterizedType)) {</span>
+<span class="nc" id="L123">                        throw new AssertionError(&quot;unsupported Generic type&quot;);</span>
                     }
-<span class="fc" id="L108">                    final Type[] typeArgs = ((ParameterizedType) fieldType).getActualTypeArguments();</span>
-<span class="pc bpc" id="L109" title="2 of 4 branches missed.">                    assert (typeArgs.length == 1);</span>
-<span class="fc" id="L110">                    final Class&lt;?&gt; parameterClass = (Class&lt;?&gt;) typeArgs[0];</span>
-<span class="fc" id="L111">                    field.set(object, this.read(fieldClass, parameterClass));</span>
-<span class="fc bfc" id="L112" title="All 2 branches covered.">                } else if (fieldClass == byte[].class) {</span>
-<span class="fc" id="L113">                    field.set(object, this.readFixedArray(Array.getLength(field.get(object))));</span>
+<span class="fc" id="L125">                    final Type[] typeArgs = ((ParameterizedType) fieldType).getActualTypeArguments();</span>
+<span class="pc bpc" id="L126" title="2 of 4 branches missed.">                    assert (typeArgs.length == 1);</span>
+<span class="fc" id="L127">                    final Class&lt;?&gt; parameterClass = (Class&lt;?&gt;) typeArgs[0];</span>
+<span class="fc" id="L128">                    field.set(object, this.read(fieldClass, parameterClass));</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">                } else if (fieldClass.getTypeParameters().length == 2) {</span>
+<span class="fc" id="L130">                    final Type fieldType = field.getGenericType();</span>
+<span class="pc bpc" id="L131" title="1 of 2 branches missed.">                    if (!(fieldType instanceof ParameterizedType)) {</span>
+<span class="nc" id="L132">                        throw new AssertionError(&quot;unsupported Generic type&quot;);</span>
+                    }
+<span class="fc" id="L134">                    final Type[] typeArgs = ((ParameterizedType) fieldType).getActualTypeArguments();</span>
+<span class="pc bpc" id="L135" title="2 of 4 branches missed.">                    assert (typeArgs.length == 2);</span>
+<span class="fc" id="L136">                    final Class&lt;?&gt; parameterClassK = (Class&lt;?&gt;) typeArgs[0];</span>
+<span class="fc" id="L137">                    final Class&lt;?&gt; parameterClassV = (Class&lt;?&gt;) typeArgs[1];</span>
+<span class="fc" id="L138">                    field.set(object, this.read(fieldClass, parameterClassK, parameterClassV));</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">                } else if (fieldClass == byte[].class) {</span>
+<span class="fc" id="L140">                    field.set(object, this.readFixedArray(Array.getLength(field.get(object))));</span>
                 } else {
-<span class="fc" id="L115">                    field.set(object, this.read(field.getType()));</span>
+<span class="fc" id="L142">                    field.set(object, this.read(field.getType()));</span>
                 }
-<span class="fc" id="L117">            }</span>
-<span class="fc" id="L118">            return object;</span>
-<span class="nc" id="L119">        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException</span>
+<span class="fc" id="L144">            }</span>
+<span class="fc" id="L145">            return object;</span>
+<span class="nc" id="L146">        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException</span>
                 | InvocationTargetException error) {
-<span class="nc" id="L121">            throw new BorshException(error);</span>
+<span class="nc" id="L148">            throw new BorshException(error);</span>
         }
     }
 
+    /**
+     * Reads a target object which inherits from given interface
+     *
+     * @param clazz the interface which should hold subtype mapping
+     * @param &lt;T&gt;   type of interface
+     * @return the subtype data read
+     */
+    default &lt;T&gt; Object readSubType(Class&lt;T&gt; clazz) {
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">        if (BorshUtil.hasAnnotation(clazz, BorshSubTypes.class)) {</span>
+<span class="fc" id="L161">            BorshSubTypes borshSubTypes = BorshUtil.findAnnotation(clazz, BorshSubTypes.class);</span>
+            // read the ordinal which defines target class
+<span class="fc" id="L163">            int ordinal = this.readU8();</span>
+            // finds the subtype for the given ordinal
+<span class="fc bfc" id="L165" title="All 2 branches covered.">            Optional&lt;BorshSubTypes.BorshSubType&gt; useSubType = Arrays.stream(borshSubTypes.value()).filter(t -&gt; t.when() == ordinal).findFirst();</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">            if (useSubType.isPresent()) {</span>
+                // read data to target subtype
+<span class="fc" id="L168">                return this.read(useSubType.get().use());</span>
+            } else {
+<span class="nc" id="L170">                throw new BorshException(String.format(&quot;No subtype with ordinal %s for interface %s&quot;, ordinal, clazz.getSimpleName()));</span>
+            }
+        } else {
+<span class="nc" id="L173">            throw new BorshException(String.format(&quot;Interface %s must have @BorshSubTypes annotation for subtype mapping.&quot;, clazz.getSimpleName()));</span>
+        }
+    }
 
     /**
      * Read data as U8
@@ -129,7 +180,7 @@ import androidx.annotation.NonNull;
      * @return U8 as byte
      */
     default byte readU8() {
-<span class="fc" id="L132">        return this.read();</span>
+<span class="fc" id="L183">        return this.read();</span>
     }
 
     /**
@@ -138,7 +189,7 @@ import androidx.annotation.NonNull;
      * @return U16 as short
      */
     default short readU16() {
-<span class="nc" id="L141">        return BorshBuffer.wrap(this.read(2)).readU16();</span>
+<span class="nc" id="L192">        return BorshBuffer.wrap(this.read(2)).readU16();</span>
     }
 
     /**
@@ -147,7 +198,7 @@ import androidx.annotation.NonNull;
      * @return U32 as int
      */
     default int readU32() {
-<span class="fc" id="L150">        return BorshBuffer.wrap(this.read(4)).readU32();</span>
+<span class="fc" id="L201">        return BorshBuffer.wrap(this.read(4)).readU32();</span>
     }
 
     /**
@@ -156,7 +207,7 @@ import androidx.annotation.NonNull;
      * @return U64 as long
      */
     default long readU64() {
-<span class="nc" id="L159">        return BorshBuffer.wrap(this.read(8)).readU64();</span>
+<span class="nc" id="L210">        return BorshBuffer.wrap(this.read(8)).readU64();</span>
     }
 
     /**
@@ -166,15 +217,15 @@ import androidx.annotation.NonNull;
      */
     @NonNull
     default BigInteger readU128() {
-<span class="fc" id="L169">        final byte[] bytes = new byte[16];</span>
-<span class="fc" id="L170">        this.read(bytes);</span>
-<span class="fc bfc" id="L171" title="All 2 branches covered.">        for (int i = 0; i &lt; 8; i++) {</span>
-<span class="fc" id="L172">            final byte a = bytes[i];</span>
-<span class="fc" id="L173">            final byte b = bytes[15 - i];</span>
-<span class="fc" id="L174">            bytes[i] = b;</span>
-<span class="fc" id="L175">            bytes[15 - i] = a;</span>
+<span class="fc" id="L220">        final byte[] bytes = new byte[16];</span>
+<span class="fc" id="L221">        this.read(bytes);</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">        for (int i = 0; i &lt; 8; i++) {</span>
+<span class="fc" id="L223">            final byte a = bytes[i];</span>
+<span class="fc" id="L224">            final byte b = bytes[15 - i];</span>
+<span class="fc" id="L225">            bytes[i] = b;</span>
+<span class="fc" id="L226">            bytes[15 - i] = a;</span>
         }
-<span class="fc" id="L177">        return new BigInteger(bytes);</span>
+<span class="fc" id="L228">        return new BigInteger(bytes);</span>
     }
 
     /**
@@ -183,7 +234,7 @@ import androidx.annotation.NonNull;
      * @return F32 as float
      */
     default float readF32() {
-<span class="nc" id="L186">        return BorshBuffer.wrap(this.read(4)).readF32();</span>
+<span class="nc" id="L237">        return BorshBuffer.wrap(this.read(4)).readF32();</span>
     }
 
     /**
@@ -192,7 +243,7 @@ import androidx.annotation.NonNull;
      * @return F64 as double
      */
     default double readF64() {
-<span class="nc" id="L195">        return BorshBuffer.wrap(this.read(8)).readF64();</span>
+<span class="nc" id="L246">        return BorshBuffer.wrap(this.read(8)).readF64();</span>
     }
 
     /**
@@ -202,10 +253,10 @@ import androidx.annotation.NonNull;
      */
     @NonNull
     default String readString() {
-<span class="fc" id="L205">        final int length = this.readU32();</span>
-<span class="fc" id="L206">        final byte[] bytes = new byte[length];</span>
-<span class="fc" id="L207">        this.read(bytes);</span>
-<span class="fc" id="L208">        return new String(bytes, StandardCharsets.UTF_8);</span>
+<span class="fc" id="L256">        final int length = this.readU32();</span>
+<span class="fc" id="L257">        final byte[] bytes = new byte[length];</span>
+<span class="fc" id="L258">        this.read(bytes);</span>
+<span class="fc" id="L259">        return new String(bytes, StandardCharsets.UTF_8);</span>
     }
 
     /**
@@ -216,12 +267,12 @@ import androidx.annotation.NonNull;
      */
     @NonNull
     default byte[] readFixedArray(final int length) {
-<span class="fc bfc" id="L219" title="All 2 branches covered.">        if (length &lt; 0) {</span>
-<span class="fc" id="L220">            throw new IllegalArgumentException();</span>
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        if (length &lt; 0) {</span>
+<span class="fc" id="L271">            throw new IllegalArgumentException();</span>
         }
-<span class="fc" id="L222">        final byte[] bytes = new byte[length];</span>
-<span class="fc" id="L223">        this.read(bytes);</span>
-<span class="fc" id="L224">        return bytes;</span>
+<span class="fc" id="L273">        final byte[] bytes = new byte[length];</span>
+<span class="fc" id="L274">        this.read(bytes);</span>
+<span class="fc" id="L275">        return bytes;</span>
     }
 
     /**
@@ -234,12 +285,12 @@ import androidx.annotation.NonNull;
     @SuppressWarnings(&quot;unchecked&quot;)
     @NonNull
     default &lt;T&gt; T[] readArray(@NonNull final Class&lt;T&gt; clazz) {
-<span class="fc" id="L237">        final int length = this.readU32();</span>
-<span class="fc" id="L238">        final T[] elements = (T[]) Array.newInstance(clazz, length);</span>
-<span class="fc bfc" id="L239" title="All 2 branches covered.">        for (int i = 0; i &lt; length; i++) {</span>
-<span class="fc" id="L240">            elements[i] = this.read(clazz);</span>
+<span class="fc" id="L288">        final int length = this.readU32();</span>
+<span class="fc" id="L289">        final T[] elements = (T[]) Array.newInstance(clazz, length);</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">        for (int i = 0; i &lt; length; i++) {</span>
+<span class="fc" id="L291">            elements[i] = this.read(clazz);</span>
         }
-<span class="fc" id="L242">        return elements;</span>
+<span class="fc" id="L293">        return elements;</span>
     }
 
     /**
@@ -251,13 +302,33 @@ import androidx.annotation.NonNull;
      */
     @NonNull
     default &lt;T&gt; Collection&lt;T&gt; readGenericArray(@NonNull final Class&lt;T&gt; parameterClass) {
-<span class="fc" id="L254">        final int length = this.readU32();</span>
+<span class="fc" id="L305">        final int length = this.readU32();</span>
         Collection&lt;T&gt; elements;
-<span class="fc" id="L256">        elements = new LinkedList&lt;&gt;();</span>
-<span class="fc bfc" id="L257" title="All 2 branches covered.">        for (int i = 0; i &lt; length; i++) {</span>
-<span class="fc" id="L258">            elements.add(this.read(parameterClass));</span>
+<span class="fc" id="L307">        elements = new LinkedList&lt;&gt;();</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">        for (int i = 0; i &lt; length; i++) {</span>
+<span class="fc" id="L309">            elements.add(this.read(parameterClass));</span>
         }
-<span class="fc" id="L260">        return elements;</span>
+<span class="fc" id="L311">        return elements;</span>
+    }
+
+    /**
+     * Reads a Map
+     *
+     * @param parameterClassK the class type of key parameter
+     * @param parameterClassV the class type of value parameter
+     * @param &lt;K&gt;             key parameter class
+     * @param &lt;V&gt;             value parameter class
+     * @return the map object with its data
+     */
+    @NonNull
+    default &lt;K, V&gt; Map&lt;K, V&gt; readGenericMap(@NonNull final Class&lt;K&gt; parameterClassK, @NonNull final Class&lt;V&gt; parameterClassV) {
+<span class="fc" id="L325">        final int length = this.readU32();</span>
+        Map&lt;K, V&gt; elements;
+<span class="fc" id="L327">        elements = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">        for (int i = 0; i &lt; length; i++) {</span>
+<span class="fc" id="L329">            elements.put(this.read(parameterClassK), this.read(parameterClassV));</span>
+        }
+<span class="fc" id="L331">        return elements;</span>
     }
 
     /**
@@ -266,7 +337,7 @@ import androidx.annotation.NonNull;
      * @return the boolean
      */
     default boolean readBoolean() {
-<span class="fc bfc" id="L269" title="All 2 branches covered.">        return (this.readU8() != 0);</span>
+<span class="fc bfc" id="L340" title="All 2 branches covered.">        return (this.readU8() != 0);</span>
     }
 
     /**
@@ -277,11 +348,11 @@ import androidx.annotation.NonNull;
      */
     @NonNull
     default &lt;T&gt; Optional&lt;T&gt; readOptional() {
-<span class="fc bfc" id="L280" title="All 2 branches covered.">        final boolean isPresent = (this.readU8() != 0);</span>
-<span class="fc bfc" id="L281" title="All 2 branches covered.">        if (!isPresent) {</span>
-<span class="fc" id="L282">            return Optional.empty();</span>
+<span class="fc bfc" id="L351" title="All 2 branches covered.">        final boolean isPresent = (this.readU8() != 0);</span>
+<span class="fc bfc" id="L352" title="All 2 branches covered.">        if (!isPresent) {</span>
+<span class="fc" id="L353">            return Optional.empty();</span>
         }
-<span class="fc" id="L284">        throw new AssertionError(&quot;Optional type has been erased and cannot be reconstructed&quot;);</span>
+<span class="fc" id="L355">        throw new AssertionError(&quot;Optional type has been erased and cannot be reconstructed&quot;);</span>
     }
 
     /**
@@ -293,8 +364,8 @@ import androidx.annotation.NonNull;
      */
     @NonNull
     default &lt;T&gt; Optional&lt;T&gt; readOptional(@NonNull final Class&lt;T&gt; clazz) {
-<span class="pc bpc" id="L296" title="1 of 2 branches missed.">        final boolean isPresent = (this.readU8() != 0);</span>
-<span class="pc bpc" id="L297" title="1 of 2 branches missed.">        return isPresent ? Optional.of(this.read(clazz)) : Optional.empty();</span>
+<span class="pc bpc" id="L367" title="1 of 2 branches missed.">        final boolean isPresent = (this.readU8() != 0);</span>
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">        return isPresent ? Optional.of(this.read(clazz)) : Optional.empty();</span>
     }
 
     /**
@@ -311,12 +382,12 @@ import androidx.annotation.NonNull;
      * @return the read byte array
      */
     default byte[] read(final int length) {
-<span class="fc bfc" id="L314" title="All 2 branches covered.">        if (length &lt; 0) {</span>
-<span class="fc" id="L315">            throw new IllegalArgumentException();</span>
+<span class="fc bfc" id="L385" title="All 2 branches covered.">        if (length &lt; 0) {</span>
+<span class="fc" id="L386">            throw new IllegalArgumentException();</span>
         }
-<span class="fc" id="L317">        final byte[] result = new byte[length];</span>
-<span class="fc" id="L318">        this.read(result);</span>
-<span class="fc" id="L319">        return result;</span>
+<span class="fc" id="L388">        final byte[] result = new byte[length];</span>
+<span class="fc" id="L389">        this.read(result);</span>
+<span class="fc" id="L390">        return result;</span>
     }
 
     /**
@@ -325,8 +396,8 @@ import androidx.annotation.NonNull;
      * @param result the byte array to read into
      */
     default void read(@NonNull final byte[] result) {
-<span class="fc" id="L328">        this.read(result, 0, result.length);</span>
-<span class="fc" id="L329">    }</span>
+<span class="fc" id="L399">        this.read(result, 0, result.length);</span>
+<span class="fc" id="L400">    }</span>
 
     /**
      * Reads byte array into result

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FieldComparator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">borshj</a> &gt; <a href="index.source.html" class="el_package">com.syntifi.near.borshj.comparator</a> &gt; <span class="el_source">FieldComparator.java</span></div><h1>FieldComparator.java</h1><pre class="source lang-java linenums">package com.syntifi.near.borshj.comparator;
+
+import com.syntifi.near.borshj.annotation.BorshOrder;
+import com.syntifi.near.borshj.exception.BorshException;
+
+import java.lang.reflect.Field;
+import java.util.Comparator;
+
+/**
+ * Comparator to sort the object's fields according to the BorshOrder annotation
+ *
+ * @author Alexandre Carvalho
+ * @author Andre Bertolace
+ * @since 0.1.0
+ */
+<span class="fc" id="L16">public class FieldComparator implements Comparator&lt;Field&gt; {</span>
+
+    public int compare(Field f1, Field f2) {
+<span class="pc bpc" id="L19" title="2 of 4 branches missed.">        if (!f1.isAnnotationPresent(BorshOrder.class) || !f2.isAnnotationPresent(BorshOrder.class)) {</span>
+<span class="nc" id="L20">            throw new BorshException(</span>
+                    &quot;Borsh POJO must specify the serialization order using the BorshOrder annotation.&quot;);
+        }
+<span class="fc" id="L23">        return Integer.compare(</span>
+<span class="fc" id="L24">                f1.getAnnotation(BorshOrder.class).value(),</span>
+<span class="fc" id="L25">                f2.getAnnotation(BorshOrder.class).value());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
