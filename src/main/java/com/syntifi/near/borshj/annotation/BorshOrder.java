@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Order decorator
+ * Order annotation
  *
  * @author Alexandre Carvalho
  * @author Andre Bertolace
@@ -15,5 +15,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface BorshOrder {
-    int order() default 1;
+    /**
+     * value() gets the order to serialize the field
+     *
+     * @return the order to serialize the field
+     */
+    int value() default 1;
 }

@@ -1,19 +1,16 @@
 package com.syntifi.near.borshj;
 
-import static java.util.Objects.requireNonNull;
+import androidx.annotation.NonNull;
+import com.syntifi.near.borshj.annotation.BorshSubTypes;
+import com.syntifi.near.borshj.exception.BorshException;
+import com.syntifi.near.borshj.util.BorshUtil;
 
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.SortedSet;
+import java.util.*;
 
-import com.syntifi.near.borshj.annotation.BorshFields;
-import com.syntifi.near.borshj.exception.BorshException;
-
-import androidx.annotation.NonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Interface with default implementations for input bytes/reading data
@@ -52,28 +49,50 @@ public interface BorshOutput<S> {
         } else if (object instanceof String) {
             return this.writeString((String) object);
         } else if (object instanceof List) {
-            return this.writeArray((List<?>) object);
+            return this.writeGenericArray((List<?>) object);
         } else if (object instanceof byte[]) {
             return this.writeFixedArray((byte[]) object);
         } else if (object instanceof Optional) {
             return this.writeOptional((Optional<?>) object);
-        } else if (object instanceof Borsh) {
+        } else if (object instanceof Map) {
+            return this.writeGenericMap((Map<?, ?>) object);
+        } else if (BorshUtil.hasAnnotation(object.getClass().getInterfaces(), BorshSubTypes.class)) {
+            return this.writeSubType(object);
+        } else if (object instanceof com.syntifi.near.borshj.Borsh) {
             return this.writePOJO(object);
         }
         throw new IllegalArgumentException();
     }
 
     /**
+     * Writes a subtype object of an interface
+     *
+     * @param object the object to write
+     * @return the calling BorshOutput instance
+     */
+    default S writeSubType(Object object) {
+        BorshSubTypes borshSubTypes = BorshUtil.findAnnotation(object.getClass().getInterfaces(), BorshSubTypes.class);
+
+        Optional<BorshSubTypes.BorshSubType> useSubType = Arrays.stream(borshSubTypes.value()).filter(t -> t.use() == object.getClass()).findFirst();
+        if (useSubType.isPresent()) {
+            this.writeU8(useSubType.get().when());
+            return this.writePOJO(object);
+        } else {
+            throw new BorshException("No subtype for this interface");
+        }
+    }
+
+    /**
      * Writes a Borsh POJO to buffer
-     * 
-     * @param object
+     *
+     * @param object the POJO object to write
      * @return the calling BorshOutput instance
      */
     @SuppressWarnings("unchecked")
     @NonNull
     default S writePOJO(@NonNull final Object object) {
         try {
-            SortedSet<Field> fields = BorshFields.filterAndSort(object.getClass().getDeclaredFields());
+            SortedSet<Field> fields = BorshUtil.filterAndSort(object.getClass().getDeclaredFields());
             for (final Field field : fields) {
                 field.setAccessible(true);
                 this.write(field.get(object));
@@ -239,7 +258,7 @@ public interface BorshOutput<S> {
      */
     @SuppressWarnings("unchecked")
     @NonNull
-    default <T> S writeArray(@NonNull final T[] array) {
+    default <T> S writeGenericArray(@NonNull final T[] array) {
         this.writeU32(array.length);
         for (final T element : array) {
             this.write(element);
@@ -256,10 +275,28 @@ public interface BorshOutput<S> {
      */
     @SuppressWarnings("unchecked")
     @NonNull
-    default <T> S writeArray(@NonNull final Collection<T> collection) {
+    default <T> S writeGenericArray(@NonNull final Collection<T> collection) {
         this.writeU32(collection.size());
         for (final T element : collection) {
             this.write(element);
+        }
+        return (S) this;
+    }
+
+    /**
+     * Writes a Map
+     *
+     * @param map the map to write
+     * @param <K> key parameter class
+     * @param <V> value parameter class
+     * @return the calling BorshOutput instance
+     */
+    @SuppressWarnings("unchecked")
+    default <K, V> S writeGenericMap(@NonNull final Map<K, V> map) {
+        this.writeU32(map.size());
+        for (final Map.Entry<K, V> element : map.entrySet()) {
+            this.write(element.getKey());
+            this.write(element.getValue());
         }
         return (S) this;
     }

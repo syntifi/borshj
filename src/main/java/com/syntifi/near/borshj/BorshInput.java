@@ -1,23 +1,16 @@
 package com.syntifi.near.borshj;
 
-import static java.util.Objects.requireNonNull;
+import androidx.annotation.NonNull;
+import com.syntifi.near.borshj.annotation.BorshSubTypes;
+import com.syntifi.near.borshj.exception.BorshException;
+import com.syntifi.near.borshj.util.BorshUtil;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.SortedSet;
+import java.util.*;
 
-import com.syntifi.near.borshj.annotation.BorshFields;
-import com.syntifi.near.borshj.exception.BorshException;
-
-import androidx.annotation.NonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Interface with default implementations for input bytes/reading data
@@ -58,7 +51,9 @@ public interface BorshInput {
             return (T) this.readString();
         } else if (clazz == Optional.class) {
             return (T) this.readOptional();
-        } else if (Borsh.isSerializable(clazz)) {
+        } else if (clazz.isInterface()) {
+            return (T) this.readSubType(clazz);
+        } else if (com.syntifi.near.borshj.Borsh.class.isAssignableFrom(clazz)) {
             return this.readPOJO(clazz);
         }
         throw new IllegalArgumentException();
@@ -69,8 +64,8 @@ public interface BorshInput {
      *
      * @param clazz          the generic class
      * @param parameterClass clazz parameter class
-     * @param <T> object class type
-     * @param <P> parameter class type
+     * @param <T>            object class type
+     * @param <P>            parameter class type
      * @return the data mapped to the type of Generic of T.
      */
     @SuppressWarnings("unchecked")
@@ -86,6 +81,28 @@ public interface BorshInput {
     }
 
     /**
+     * Reads a value for a key/value type
+     *
+     * @param clazz           the key/value type class object
+     * @param parameterClassK the parameter class object of key type
+     * @param parameterClassV the parameter class object of value type
+     * @param <T>             the type of key/value class object
+     * @param <K>             the type of key parameter
+     * @param <V>             the type of value parameter
+     * @return the map object with its data
+     */
+    @SuppressWarnings("unchecked")
+    default <T, K, V> T read(final @NonNull Class<T> clazz, final @NonNull Class<K> parameterClassK, final @NonNull Class<V> parameterClassV) {
+        requireNonNull(clazz);
+        requireNonNull(parameterClassK);
+        requireNonNull(parameterClassV);
+        if (Map.class.isAssignableFrom(clazz)) {
+            return (T) this.readGenericMap(parameterClassK, parameterClassV);
+        }
+        throw new IllegalArgumentException();
+    }
+
+    /**
      * Reads into a Borsh POJO
      *
      * @param clazz Borsh POJO class
@@ -95,12 +112,12 @@ public interface BorshInput {
     default <T> T readPOJO(@NonNull final Class<T> clazz) {
         try {
             final T object = clazz.getConstructor().newInstance();
-            SortedSet<Field> fields = BorshFields.filterAndSort(object.getClass().getDeclaredFields());
+            SortedSet<Field> fields = BorshUtil.filterAndSort(object.getClass().getDeclaredFields());
             for (final Field field : fields) {
                 field.setAccessible(true);
                 final Class<?> fieldClass = field.getType();
                 // Is generic type?
-                if (fieldClass.getTypeParameters().length > 0) {
+                if (fieldClass.getTypeParameters().length == 1) {
                     final Type fieldType = field.getGenericType();
                     if (!(fieldType instanceof ParameterizedType)) {
                         throw new AssertionError("unsupported Generic type");
@@ -109,6 +126,16 @@ public interface BorshInput {
                     assert (typeArgs.length == 1);
                     final Class<?> parameterClass = (Class<?>) typeArgs[0];
                     field.set(object, this.read(fieldClass, parameterClass));
+                } else if (fieldClass.getTypeParameters().length == 2) {
+                    final Type fieldType = field.getGenericType();
+                    if (!(fieldType instanceof ParameterizedType)) {
+                        throw new AssertionError("unsupported Generic type");
+                    }
+                    final Type[] typeArgs = ((ParameterizedType) fieldType).getActualTypeArguments();
+                    assert (typeArgs.length == 2);
+                    final Class<?> parameterClassK = (Class<?>) typeArgs[0];
+                    final Class<?> parameterClassV = (Class<?>) typeArgs[1];
+                    field.set(object, this.read(fieldClass, parameterClassK, parameterClassV));
                 } else if (fieldClass == byte[].class) {
                     field.set(object, this.readFixedArray(Array.getLength(field.get(object))));
                 } else {
@@ -122,6 +149,30 @@ public interface BorshInput {
         }
     }
 
+    /**
+     * Reads a target object which inherits from given interface
+     *
+     * @param clazz the interface which should hold subtype mapping
+     * @param <T>   type of interface
+     * @return the subtype data read
+     */
+    default <T> Object readSubType(Class<T> clazz) {
+        if (BorshUtil.hasAnnotation(clazz, BorshSubTypes.class)) {
+            BorshSubTypes borshSubTypes = BorshUtil.findAnnotation(clazz, BorshSubTypes.class);
+            // read the ordinal which defines target class
+            int ordinal = this.readU8();
+            // finds the subtype for the given ordinal
+            Optional<BorshSubTypes.BorshSubType> useSubType = Arrays.stream(borshSubTypes.value()).filter(t -> t.when() == ordinal).findFirst();
+            if (useSubType.isPresent()) {
+                // read data to target subtype
+                return this.read(useSubType.get().use());
+            } else {
+                throw new BorshException(String.format("No subtype with ordinal %s for interface %s", ordinal, clazz.getSimpleName()));
+            }
+        } else {
+            throw new BorshException(String.format("Interface %s must have @BorshSubTypes annotation for subtype mapping.", clazz.getSimpleName()));
+        }
+    }
 
     /**
      * Read data as U8
@@ -256,6 +307,26 @@ public interface BorshInput {
         elements = new LinkedList<>();
         for (int i = 0; i < length; i++) {
             elements.add(this.read(parameterClass));
+        }
+        return elements;
+    }
+
+    /**
+     * Reads a Map
+     *
+     * @param parameterClassK the class type of key parameter
+     * @param parameterClassV the class type of value parameter
+     * @param <K>             key parameter class
+     * @param <V>             value parameter class
+     * @return the map object with its data
+     */
+    @NonNull
+    default <K, V> Map<K, V> readGenericMap(@NonNull final Class<K> parameterClassK, @NonNull final Class<V> parameterClassV) {
+        final int length = this.readU32();
+        Map<K, V> elements;
+        elements = new HashMap<>();
+        for (int i = 0; i < length; i++) {
+            elements.put(this.read(parameterClassK), this.read(parameterClassV));
         }
         return elements;
     }

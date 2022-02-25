@@ -7,7 +7,7 @@ import com.syntifi.near.borshj.annotation.BorshOrder;
 
 public class BorshWithOptional implements Borsh {
 
-    @BorshOrder(order = 1)
+    @BorshOrder(1)
     public final Optional<String> optional;
 
     public BorshWithOptional() {

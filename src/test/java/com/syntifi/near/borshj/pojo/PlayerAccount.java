@@ -14,16 +14,16 @@ import com.syntifi.near.borshj.annotation.BorshOrder;
  */
 public class PlayerAccount implements Borsh {
 
-    @BorshOrder(order = 1)
+    @BorshOrder(1)
     public byte[] owner = new byte[32];
 
-    @BorshOrder(order = 2)
+    @BorshOrder(2)
     public byte[] nft_addr = new byte[32];
 
-    @BorshOrder(order = 3)
+    @BorshOrder(3)
     public byte is_waiting_match_making;
 
-    @BorshOrder(order = 4)
+    @BorshOrder(4)
     public byte is_waiting_battle_royal;
 
     public PlayerAccount() {

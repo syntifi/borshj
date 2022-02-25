@@ -34,19 +34,19 @@ public class FuzzTests {
                         .subclass(Bean.class)
                         .defineField("name", String.class, Opcodes.ACC_PUBLIC)
                         .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
-                                .define("order", 1)
+                                .define("value", 1)
                                 .build())
                         .defineField("email", String.class, Opcodes.ACC_PUBLIC)
                         .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
-                                .define("order", 2)
+                                .define("value", 2)
                                 .build())
                         .defineField("age", Integer.class, Opcodes.ACC_PUBLIC)
                         .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
-                                .define("order", 3)
+                                .define("value", 3)
                                 .build())
                         .defineField("twitter", Boolean.class, Opcodes.ACC_PUBLIC)
                         .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
-                                .define("order", 4)
+                                .define("value", 4)
                                 .build())
                         .make()
                         .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
@@ -80,7 +80,7 @@ public class FuzzTests {
                     .annotateField(
                             AnnotationDescription.Builder
                                     .ofType(BorshOrder.class)
-                                    .define("order", i + 1)
+                                    .define("value", i + 1)
                                     .build());
         }
 
@@ -104,7 +104,6 @@ public class FuzzTests {
         switch (Math.abs(random.nextInt()) % 10) {
             case 0:
                 if (level < MAX_RECURSION) return newRandomBean(random, level + 1);
-                else {/* fallthrough */}
             case 1:
                 return random.nextBoolean();
             case 2:
