@@ -4,9 +4,9 @@ import com.syntifi.near.borshj.Borsh;
 import com.syntifi.near.borshj.annotation.BorshOrder;
 
 public class Rect2Df implements Borsh {
-    @BorshOrder(order = 1)
+    @BorshOrder(1)
     private Point2Df topLeft;
-    @BorshOrder(order = 2)
+    @BorshOrder(2)
     private Point2Df bottomRight;
 
     public Rect2Df() {

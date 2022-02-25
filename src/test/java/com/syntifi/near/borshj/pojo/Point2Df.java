@@ -4,10 +4,10 @@ import com.syntifi.near.borshj.Borsh;
 import com.syntifi.near.borshj.annotation.BorshOrder;
 
 public class Point2Df implements Borsh {
-    @BorshOrder(order = 1)
+    @BorshOrder(1)
     private float x;
 
-    @BorshOrder(order = 2)
+    @BorshOrder(2)
     private float y;
 
     public Point2Df() {

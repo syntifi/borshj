@@ -1,8 +1,9 @@
 package com.syntifi.near.borshj;
 
 import androidx.annotation.NonNull;
-import com.syntifi.near.borshj.annotation.BorshFields;
+import com.syntifi.near.borshj.annotation.BorshSubTypes;
 import com.syntifi.near.borshj.exception.BorshException;
+import com.syntifi.near.borshj.util.BorshUtil;
 
 import java.lang.reflect.*;
 import java.math.BigInteger;
@@ -50,7 +51,9 @@ public interface BorshInput {
             return (T) this.readString();
         } else if (clazz == Optional.class) {
             return (T) this.readOptional();
-        } else if (Borsh.isSerializable(clazz)) {
+        } else if (clazz.isInterface()) {
+            return (T) this.readSubType(clazz);
+        } else if (com.syntifi.near.borshj.Borsh.class.isAssignableFrom(clazz)) {
             return this.readPOJO(clazz);
         }
         throw new IllegalArgumentException();
@@ -78,15 +81,17 @@ public interface BorshInput {
     }
 
     /**
+     * Reads a value for a key/value type
      *
-     * @param clazz
-     * @param parameterClassK
-     * @param parameterClassV
-     * @param <T>
-     * @param <K>
-     * @param <V>
-     * @return
+     * @param clazz           the key/value type class object
+     * @param parameterClassK the parameter class object of key type
+     * @param parameterClassV the parameter class object of value type
+     * @param <T>             the type of key/value class object
+     * @param <K>             the type of key parameter
+     * @param <V>             the type of value parameter
+     * @return the map object with its data
      */
+    @SuppressWarnings("unchecked")
     default <T, K, V> T read(final @NonNull Class<T> clazz, final @NonNull Class<K> parameterClassK, final @NonNull Class<V> parameterClassV) {
         requireNonNull(clazz);
         requireNonNull(parameterClassK);
@@ -107,7 +112,7 @@ public interface BorshInput {
     default <T> T readPOJO(@NonNull final Class<T> clazz) {
         try {
             final T object = clazz.getConstructor().newInstance();
-            SortedSet<Field> fields = BorshFields.filterAndSort(object.getClass().getDeclaredFields());
+            SortedSet<Field> fields = BorshUtil.filterAndSort(object.getClass().getDeclaredFields());
             for (final Field field : fields) {
                 field.setAccessible(true);
                 final Class<?> fieldClass = field.getType();
@@ -144,6 +149,30 @@ public interface BorshInput {
         }
     }
 
+    /**
+     * Reads a target object which inherits from given interface
+     *
+     * @param clazz the interface which should hold subtype mapping
+     * @param <T>   type of interface
+     * @return the subtype data read
+     */
+    default <T> Object readSubType(Class<T> clazz) {
+        if (BorshUtil.hasAnnotation(clazz, BorshSubTypes.class)) {
+            BorshSubTypes borshSubTypes = BorshUtil.findAnnotation(clazz, BorshSubTypes.class);
+            // read the ordinal which defines target class
+            int ordinal = this.readU8();
+            // finds the subtype for the given ordinal
+            Optional<BorshSubTypes.BorshSubType> useSubType = Arrays.stream(borshSubTypes.value()).filter(t -> t.when() == ordinal).findFirst();
+            if (useSubType.isPresent()) {
+                // read data to target subtype
+                return this.read(useSubType.get().use());
+            } else {
+                throw new BorshException(String.format("No subtype with ordinal %s for interface %s", ordinal, clazz.getSimpleName()));
+            }
+        } else {
+            throw new BorshException(String.format("Interface %s must have @BorshSubTypes annotation for subtype mapping.", clazz.getSimpleName()));
+        }
+    }
 
     /**
      * Read data as U8
@@ -289,13 +318,13 @@ public interface BorshInput {
      * @param parameterClassV the class type of value parameter
      * @param <K>             key parameter class
      * @param <V>             value parameter class
-     * @return
+     * @return the map object with its data
      */
     @NonNull
     default <K, V> Map<K, V> readGenericMap(@NonNull final Class<K> parameterClassK, @NonNull final Class<V> parameterClassV) {
         final int length = this.readU32();
         Map<K, V> elements;
-        elements = new HashMap();
+        elements = new HashMap<>();
         for (int i = 0; i < length; i++) {
             elements.put(this.read(parameterClassK), this.read(parameterClassV));
         }

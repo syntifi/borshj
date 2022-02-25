@@ -1,9 +1,6 @@
 package com.syntifi.near.borshj;
 
-import com.syntifi.near.borshj.pojo.BorshWithCollection;
-import com.syntifi.near.borshj.pojo.BorshWithMap;
-import com.syntifi.near.borshj.pojo.BorshWithOptional;
-import com.syntifi.near.borshj.pojo.PlayerAccount;
+import com.syntifi.near.borshj.pojo.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -134,6 +131,46 @@ public class BorshBufferTests {
         testMap.put(3, "Cool");
 
         assertEquals(new BorshWithMap(testMap), readObject);
+    }
+
+    @Test
+    void readShapeCirclePOJO() {
+        final byte[] input = new byte[]{ 0, 5, 0, 0, 0};
+
+        buffer = BorshBuffer.wrap(input);
+        Shape readObject = buffer.read(Shape.class);
+
+        assertEquals(new Circle(5), readObject);
+    }
+
+    @Test
+    void readShapeEmptyPOJO() {
+        final byte[] input = new byte[]{1};
+
+        buffer = BorshBuffer.wrap(input);
+        Shape readObject = buffer.read(Shape.class);
+
+        assertEquals(new Empty(), readObject);
+    }
+
+    @Test
+    void readBorshWithShapeEmptyPOJO() {
+        final byte[] input = new byte[]{1};
+
+        buffer = BorshBuffer.wrap(input);
+        BorshWithShape readObject = buffer.read(BorshWithShape.class);
+
+        assertEquals(new BorshWithShape(new Empty()), readObject);
+    }
+
+    @Test
+    void readBorshWithShapeCirclePOJO() {
+        final byte[] input = new byte[]{0, 5, 0, 0, 0};
+
+        buffer = BorshBuffer.wrap(input);
+        BorshWithShape readObject = buffer.read(BorshWithShape.class);
+
+        assertEquals(new BorshWithShape(new Circle(5)), readObject);
     }
 
     @Test
@@ -305,6 +342,50 @@ public class BorshBufferTests {
         buffer.write(new BorshWithMap(testMap));
 
         final byte[] expected = new byte[]{3, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 'B', 'o', 'r', 's', 'h', 2, 0, 0, 0, 2, 0, 0, 0, 'i', 's', 3, 0, 0, 0, 4, 0, 0, 0, 'C', 'o', 'o', 'l'};
+
+        final byte[] actual = buffer.toByteArray();
+
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void writeShapeCirclePOJO() {
+        buffer.write(new Circle(5));
+
+        final byte[] expected = new byte[]{0, 5, 0, 0, 0};
+
+        final byte[] actual = buffer.toByteArray();
+
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void writeShapeEmptyPOJO() {
+        buffer.write(new Empty());
+
+        final byte[] expected = new byte[]{1};
+
+        final byte[] actual = buffer.toByteArray();
+
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void writeBorshWithShapeEmptyPOJO() {
+        buffer.write(new BorshWithShape(new Empty()));
+
+        final byte[] expected = new byte[]{1};
+
+        final byte[] actual = buffer.toByteArray();
+
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void writeBorshWithShapeCirclePOJO() {
+        buffer.write(new BorshWithShape(new Circle(5)));
+
+        final byte[] expected = new byte[]{0, 5, 0, 0, 0};
 
         final byte[] actual = buffer.toByteArray();
 
