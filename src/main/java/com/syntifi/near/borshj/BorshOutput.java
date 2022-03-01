@@ -58,6 +58,8 @@ public interface BorshOutput<S> {
             return this.writeGenericMap((Map<?, ?>) object);
         } else if (BorshUtil.hasAnnotation(object.getClass().getInterfaces(), BorshSubTypes.class)) {
             return this.writeSubType(object);
+        } else if (object.getClass().isEnum()) {
+            return this.writeEnum(object);
         } else if (object instanceof com.syntifi.near.borshj.Borsh) {
             return this.writePOJO(object);
         }
@@ -83,6 +85,18 @@ public interface BorshOutput<S> {
     }
 
     /**
+     * Writes an Enum value
+     *
+     * @param object the Enum value
+     * @return the calling BorshOutput instance
+     */
+    default S writeEnum(Object object) {
+        Enum<?> enumerator = (Enum<?>)object;
+
+        return this.writeU8(enumerator.ordinal());
+    }
+
+    /**
      * Writes a Borsh POJO to buffer
      *
      * @param object the POJO object to write
@@ -92,7 +106,7 @@ public interface BorshOutput<S> {
     @NonNull
     default S writePOJO(@NonNull final Object object) {
         try {
-            SortedSet<Field> fields = BorshUtil.filterAndSort(object.getClass().getDeclaredFields());
+            SortedSet<Field> fields = BorshUtil.filterAndSort(BorshUtil.getAllFields(object.getClass()));
             for (final Field field : fields) {
                 field.setAccessible(true);
                 this.write(field.get(object));

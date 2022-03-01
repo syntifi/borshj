@@ -1,12 +1,12 @@
 package com.syntifi.near.borshj.util;
 
-import com.syntifi.near.borshj.annotation.BorshIgnore;
+import com.syntifi.near.borshj.annotation.BorshField;
 import com.syntifi.near.borshj.comparator.FieldComparator;
 import com.syntifi.near.borshj.exception.BorshException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +35,7 @@ public final class BorshUtil {
     public static SortedSet<Field> filterAndSort(Field[] fields) {
         SortedSet<Field> sortedFields = new TreeSet<>(new FieldComparator());
         for (Field field : fields) {
-            if (!Modifier.isTransient(field.getModifiers()) &&
-                    !field.isAnnotationPresent(BorshIgnore.class)) {
+            if (field.isAnnotationPresent(BorshField.class)) {
                 sortedFields.add(field);
             }
         }
@@ -131,5 +130,19 @@ public final class BorshUtil {
      */
     public static boolean hasAnnotation(Class<?> clazz, Class<? extends Annotation> annotation) {
         return clazz.isAnnotationPresent(annotation);
+    }
+
+    /**
+     * Gets all fields of class and all superclasses
+     *
+     * @param type the class to search for fields
+     * @return all fields found recursively
+     */
+    public static Field[] getAllFields(Class<?> type) {
+        List<Field> fields = new ArrayList<>();
+        for (Class<?> c = type; c != null; c = c.getSuperclass()) {
+            fields.addAll(Arrays.asList(c.getDeclaredFields()));
+        }
+        return fields.toArray(new Field[0]);
     }
 }

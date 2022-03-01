@@ -5,10 +5,20 @@ import com.syntifi.near.borshj.annotation.BorshSubTypes;
 import com.syntifi.near.borshj.exception.BorshException;
 import com.syntifi.near.borshj.util.BorshUtil;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Optional;
+import java.util.SortedSet;
 
 import static java.util.Objects.requireNonNull;
 
@@ -53,6 +63,8 @@ public interface BorshInput {
             return (T) this.readOptional();
         } else if (clazz.isInterface()) {
             return (T) this.readSubType(clazz);
+        } else if (clazz.isEnum()) {
+            return this.readEnum(clazz);
         } else if (com.syntifi.near.borshj.Borsh.class.isAssignableFrom(clazz)) {
             return this.readPOJO(clazz);
         }
@@ -103,6 +115,18 @@ public interface BorshInput {
     }
 
     /**
+     * Read Enum by its ordinal byte
+     *
+     * @param clazz Enum class
+     * @param <T> the type parameter
+     * @return the enum resulting of read ordinal
+     */
+    default <T> T readEnum(Class<T> clazz) {
+        int ordinal = this.readU8();
+        return clazz.getEnumConstants()[ordinal];
+    }
+
+    /**
      * Reads into a Borsh POJO
      *
      * @param clazz Borsh POJO class
@@ -112,7 +136,7 @@ public interface BorshInput {
     default <T> T readPOJO(@NonNull final Class<T> clazz) {
         try {
             final T object = clazz.getConstructor().newInstance();
-            SortedSet<Field> fields = BorshUtil.filterAndSort(object.getClass().getDeclaredFields());
+            SortedSet<Field> fields = BorshUtil.filterAndSort(BorshUtil.getAllFields(object.getClass()));
             for (final Field field : fields) {
                 field.setAccessible(true);
                 final Class<?> fieldClass = field.getType();

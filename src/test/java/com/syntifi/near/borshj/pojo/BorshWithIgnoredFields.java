@@ -2,12 +2,10 @@ package com.syntifi.near.borshj.pojo;
 
 import com.syntifi.near.borshj.Borsh;
 import com.syntifi.near.borshj.annotation.BorshField;
-import com.syntifi.near.borshj.annotation.BorshIgnore;
 
 import java.util.Objects;
 
 public class BorshWithIgnoredFields implements Borsh {
-    @BorshIgnore
     public long ignoredValue;
 
     @BorshField
