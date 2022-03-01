@@ -1,6 +1,6 @@
 package com.syntifi.near.borshj;
 
-import com.syntifi.near.borshj.annotation.BorshOrder;
+import com.syntifi.near.borshj.annotation.BorshField;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.DynamicType;
@@ -33,19 +33,19 @@ public class FuzzTests {
                 new ByteBuddy()
                         .subclass(Bean.class)
                         .defineField("name", String.class, Opcodes.ACC_PUBLIC)
-                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
                                 .define("value", 1)
                                 .build())
                         .defineField("email", String.class, Opcodes.ACC_PUBLIC)
-                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
                                 .define("value", 2)
                                 .build())
                         .defineField("age", Integer.class, Opcodes.ACC_PUBLIC)
-                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
                                 .define("value", 3)
                                 .build())
                         .defineField("twitter", Boolean.class, Opcodes.ACC_PUBLIC)
-                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
                                 .define("value", 4)
                                 .build())
                         .make()
@@ -79,7 +79,7 @@ public class FuzzTests {
                     .defineField(fieldName, fieldValues[i].getClass(), Opcodes.ACC_PUBLIC)
                     .annotateField(
                             AnnotationDescription.Builder
-                                    .ofType(BorshOrder.class)
+                                    .ofType(BorshField.class)
                                     .define("value", i + 1)
                                     .build());
         }

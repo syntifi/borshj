@@ -1,12 +1,14 @@
 package com.syntifi.near.borshj.pojo;
 
 import com.syntifi.near.borshj.Borsh;
-import com.syntifi.near.borshj.annotation.BorshOrder;
+import com.syntifi.near.borshj.annotation.BorshField;
 
 public class Rect2Df implements Borsh {
-    @BorshOrder(1)
+
+    @SuppressWarnings("DefaultAnnotationParam")
+    @BorshField(1)
     private Point2Df topLeft;
-    @BorshOrder(2)
+    @BorshField(2)
     private Point2Df bottomRight;
 
     public Rect2Df() {

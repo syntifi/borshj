@@ -119,23 +119,8 @@ public class BorshBufferTests {
     }
 
     @Test
-    void readBorshWithMapPOJO() {
-        final byte[] input = new byte[]{3, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 'B', 'o', 'r', 's', 'h', 2, 0, 0, 0, 2, 0, 0, 0, 'i', 's', 3, 0, 0, 0, 4, 0, 0, 0, 'C', 'o', 'o', 'l'};
-
-        buffer = BorshBuffer.wrap(input);
-        BorshWithMap readObject = buffer.read(BorshWithMap.class);
-
-        Map<Integer, String> testMap = new TreeMap<>();
-        testMap.put(1, "Borsh");
-        testMap.put(2, "is");
-        testMap.put(3, "Cool");
-
-        assertEquals(new BorshWithMap(testMap), readObject);
-    }
-
-    @Test
     void readShapeCirclePOJO() {
-        final byte[] input = new byte[]{ 0, 5, 0, 0, 0};
+        final byte[] input = new byte[]{0, 5, 0, 0, 0};
 
         buffer = BorshBuffer.wrap(input);
         Shape readObject = buffer.read(Shape.class);
@@ -151,6 +136,21 @@ public class BorshBufferTests {
         Shape readObject = buffer.read(Shape.class);
 
         assertEquals(new Empty(), readObject);
+    }
+
+    @Test
+    void readBorshWithMapPOJO() {
+        final byte[] input = new byte[]{3, 0, 0, 0, 1, 0, 0, 0, 5, 0, 0, 0, 'B', 'o', 'r', 's', 'h', 2, 0, 0, 0, 2, 0, 0, 0, 'i', 's', 3, 0, 0, 0, 4, 0, 0, 0, 'C', 'o', 'o', 'l'};
+
+        buffer = BorshBuffer.wrap(input);
+        BorshWithMap readObject = buffer.read(BorshWithMap.class);
+
+        Map<Integer, String> testMap = new TreeMap<>();
+        testMap.put(1, "Borsh");
+        testMap.put(2, "is");
+        testMap.put(3, "Cool");
+
+        assertEquals(new BorshWithMap(testMap), readObject);
     }
 
     @Test
@@ -212,6 +212,17 @@ public class BorshBufferTests {
                         (byte) 1,
                         (byte) 1),
                 readObject);
+    }
+
+    @Test
+    void readBorshWithIgnorePOJO() {
+        final byte[] input = new byte[]{5, 0, 0, 0, 'B', 'o', 'r', 's', 'h'};
+
+        buffer = BorshBuffer.wrap(input);
+        BorshWithIgnoredFields readObject = buffer.read(BorshWithIgnoredFields.class);
+
+        assertNotEquals(new BorshWithIgnoredFields(10L, "Borsh"), readObject);
+        assertEquals(new BorshWithIgnoredFields(10L, "Borsh").notIgnoredValue, readObject.notIgnoredValue);
     }
 
     @Test
@@ -418,6 +429,17 @@ public class BorshBufferTests {
                 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
                 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65,
                 1, 1};
+
+        final byte[] actual = buffer.toByteArray();
+
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void writeBorshWithIgnorePOJO() {
+        buffer.write(new BorshWithIgnoredFields(10L, "Borsh"));
+
+        final byte[] expected = new byte[]{5, 0, 0, 0, 'B', 'o', 'r', 's', 'h'};
 
         final byte[] actual = buffer.toByteArray();
 

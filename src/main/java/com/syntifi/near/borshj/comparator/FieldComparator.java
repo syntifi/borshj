@@ -1,6 +1,6 @@
 package com.syntifi.near.borshj.comparator;
 
-import com.syntifi.near.borshj.annotation.BorshOrder;
+import com.syntifi.near.borshj.annotation.BorshField;
 import com.syntifi.near.borshj.exception.BorshException;
 
 import java.lang.reflect.Field;
@@ -16,12 +16,12 @@ import java.util.Comparator;
 public class FieldComparator implements Comparator<Field> {
 
     public int compare(Field f1, Field f2) {
-        if (!f1.isAnnotationPresent(BorshOrder.class) || !f2.isAnnotationPresent(BorshOrder.class)) {
+        if (!f1.isAnnotationPresent(BorshField.class) || !f2.isAnnotationPresent(BorshField.class)) {
             throw new BorshException(
                     "Borsh POJO must specify the serialization order using the BorshOrder annotation.");
         }
         return Integer.compare(
-                f1.getAnnotation(BorshOrder.class).value(),
-                f2.getAnnotation(BorshOrder.class).value());
+                f1.getAnnotation(BorshField.class).value(),
+                f2.getAnnotation(BorshField.class).value());
     }
 }

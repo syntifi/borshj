@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import com.syntifi.near.borshj.Borsh;
-import com.syntifi.near.borshj.annotation.BorshOrder;
+import com.syntifi.near.borshj.annotation.BorshField;
 
 public class BorshWithCollection implements Borsh {
-    @BorshOrder
+    @BorshField
     public final Collection<String> collection;
 
     public BorshWithCollection() {

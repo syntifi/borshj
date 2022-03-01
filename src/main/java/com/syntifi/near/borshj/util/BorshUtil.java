@@ -1,12 +1,17 @@
 package com.syntifi.near.borshj.util;
 
+import com.syntifi.near.borshj.annotation.BorshIgnore;
 import com.syntifi.near.borshj.comparator.FieldComparator;
 import com.syntifi.near.borshj.exception.BorshException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -30,7 +35,8 @@ public final class BorshUtil {
     public static SortedSet<Field> filterAndSort(Field[] fields) {
         SortedSet<Field> sortedFields = new TreeSet<>(new FieldComparator());
         for (Field field : fields) {
-            if (!Modifier.isTransient(field.getModifiers())) {
+            if (!Modifier.isTransient(field.getModifiers()) &&
+                    !field.isAnnotationPresent(BorshIgnore.class)) {
                 sortedFields.add(field);
             }
         }
