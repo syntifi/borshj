@@ -16,9 +16,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface BorshField {
     /**
-     * value() gets the order to serialize the field
+     * order() gets the order to serialize the field
      *
      * @return the order to serialize the field
      */
-    int value() default 1;
+    int order();
 }

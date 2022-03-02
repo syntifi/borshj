@@ -34,19 +34,19 @@ public class FuzzTests {
                         .subclass(Bean.class)
                         .defineField("name", String.class, Opcodes.ACC_PUBLIC)
                         .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
-                                .define("value", 1)
+                                .define("order", 1)
                                 .build())
                         .defineField("email", String.class, Opcodes.ACC_PUBLIC)
                         .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
-                                .define("value", 2)
+                                .define("order", 2)
                                 .build())
                         .defineField("age", Integer.class, Opcodes.ACC_PUBLIC)
                         .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
-                                .define("value", 3)
+                                .define("order", 3)
                                 .build())
                         .defineField("twitter", Boolean.class, Opcodes.ACC_PUBLIC)
                         .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
-                                .define("value", 4)
+                                .define("order", 4)
                                 .build())
                         .make()
                         .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
@@ -80,7 +80,7 @@ public class FuzzTests {
                     .annotateField(
                             AnnotationDescription.Builder
                                     .ofType(BorshField.class)
-                                    .define("value", i + 1)
+                                    .define("order", i + 1)
                                     .build());
         }
 

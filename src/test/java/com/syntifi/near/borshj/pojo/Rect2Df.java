@@ -5,10 +5,9 @@ import com.syntifi.near.borshj.annotation.BorshField;
 
 public class Rect2Df implements Borsh {
 
-    @SuppressWarnings("DefaultAnnotationParam")
-    @BorshField(1)
+    @BorshField(order = 1)
     private Point2Df topLeft;
-    @BorshField(2)
+    @BorshField(order = 2)
     private Point2Df bottomRight;
 
     public Rect2Df() {

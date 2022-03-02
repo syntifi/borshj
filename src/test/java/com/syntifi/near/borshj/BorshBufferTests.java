@@ -226,6 +226,16 @@ public class BorshBufferTests {
     }
 
     @Test
+    void readBorshWithEnumPOJO() {
+        final byte[] input = new byte[]{2};
+
+        buffer = BorshBuffer.wrap(input);
+        BorshWithEnum readObject = buffer.read(BorshWithEnum.class);
+
+        assertEquals(new BorshWithEnum(BorshWithEnum.TestEnum.C), readObject);
+   }
+
+    @Test
     void writeU8() {
         final byte[] actual = buffer.writeU8(0x42).toByteArray();
         final byte[] expected = new byte[]{0x42};
@@ -440,6 +450,17 @@ public class BorshBufferTests {
         buffer.write(new BorshWithIgnoredFields(10L, "Borsh"));
 
         final byte[] expected = new byte[]{5, 0, 0, 0, 'B', 'o', 'r', 's', 'h'};
+
+        final byte[] actual = buffer.toByteArray();
+
+        assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    void writeBorshWithEnumPOJO() {
+        buffer.write(new BorshWithEnum(BorshWithEnum.TestEnum.B));
+
+        final byte[] expected = new byte[]{1};
 
         final byte[] actual = buffer.toByteArray();
 

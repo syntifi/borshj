@@ -7,7 +7,7 @@ import com.syntifi.near.borshj.Borsh;
 import com.syntifi.near.borshj.annotation.BorshField;
 
 public class BorshWithCollection implements Borsh {
-    @BorshField
+    @BorshField(order = 1)
     public final Collection<String> collection;
 
     public BorshWithCollection() {

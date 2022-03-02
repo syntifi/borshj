@@ -8,7 +8,7 @@ import java.util.Objects;
 public class BorshWithIgnoredFields implements Borsh {
     public long ignoredValue;
 
-    @BorshField
+    @BorshField(order = 1)
     public String notIgnoredValue;
 
     public BorshWithIgnoredFields() {

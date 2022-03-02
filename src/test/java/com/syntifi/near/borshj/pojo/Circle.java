@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Circle implements Shape {
 
-    @BorshField
+    @BorshField(order = 1)
     private int radius;
 
     public Circle() {

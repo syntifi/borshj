@@ -6,7 +6,7 @@ import com.syntifi.near.borshj.annotation.BorshField;
 import java.util.Objects;
 
 public class BorshWithShape implements Borsh {
-    @BorshField
+    @BorshField(order = 1)
     private Shape shape;
 
     public Shape getShape() {

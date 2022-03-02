@@ -21,7 +21,7 @@ public class FieldComparator implements Comparator<Field> {
                     "Borsh POJO must specify the serialization order using the BorshField annotation.");
         }
         return Integer.compare(
-                f1.getAnnotation(BorshField.class).value(),
-                f2.getAnnotation(BorshField.class).value());
+                f1.getAnnotation(BorshField.class).order(),
+                f2.getAnnotation(BorshField.class).order());
     }
 }

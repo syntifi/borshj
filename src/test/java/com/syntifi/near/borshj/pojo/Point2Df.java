@@ -5,10 +5,10 @@ import com.syntifi.near.borshj.annotation.BorshField;
 
 public class Point2Df implements Borsh {
 
-    @BorshField
+    @BorshField(order = 1)
     private float x;
 
-    @BorshField(2)
+    @BorshField(order = 2)
     private float y;
 
     public Point2Df() {

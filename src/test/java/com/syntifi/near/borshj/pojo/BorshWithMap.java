@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 public class BorshWithMap implements Borsh {
-    @BorshField
+    @BorshField(order = 1)
     public final Map<Integer, String> map;
 
     public BorshWithMap() {

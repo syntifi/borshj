@@ -14,17 +14,16 @@ import com.syntifi.near.borshj.annotation.BorshField;
  */
 public class PlayerAccount implements Borsh {
 
-    @SuppressWarnings("DefaultAnnotationParam")
-    @BorshField(1)
+    @BorshField(order = 1)
     public byte[] owner = new byte[32];
 
-    @BorshField(2)
+    @BorshField(order = 2)
     public byte[] nft_addr = new byte[32];
 
-    @BorshField(3)
+    @BorshField(order = 3)
     public byte is_waiting_match_making;
 
-    @BorshField(4)
+    @BorshField(order = 4)
     public byte is_waiting_battle_royal;
 
     public PlayerAccount() {
