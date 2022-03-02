@@ -58,10 +58,12 @@ public interface BorshOutput&lt;S&gt; {
 <span class="fc" id="L58">            return this.writeGenericMap((Map&lt;?, ?&gt;) object);</span>
 <span class="fc bfc" id="L59" title="All 2 branches covered.">        } else if (BorshUtil.hasAnnotation(object.getClass().getInterfaces(), BorshSubTypes.class)) {</span>
 <span class="fc" id="L60">            return this.writeSubType(object);</span>
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        } else if (object instanceof com.syntifi.near.borshj.Borsh) {</span>
-<span class="fc" id="L62">            return this.writePOJO(object);</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        } else if (object.getClass().isEnum()) {</span>
+<span class="fc" id="L62">            return this.writeEnum(object);</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">        } else if (object instanceof com.syntifi.near.borshj.Borsh) {</span>
+<span class="fc" id="L64">            return this.writePOJO(object);</span>
         }
-<span class="nc" id="L64">        throw new IllegalArgumentException();</span>
+<span class="nc" id="L66">        throw new IllegalArgumentException();</span>
     }
 
     /**
@@ -71,15 +73,27 @@ public interface BorshOutput&lt;S&gt; {
      * @return the calling BorshOutput instance
      */
     default S writeSubType(Object object) {
-<span class="fc" id="L74">        BorshSubTypes borshSubTypes = BorshUtil.findAnnotation(object.getClass().getInterfaces(), BorshSubTypes.class);</span>
+<span class="fc" id="L76">        BorshSubTypes borshSubTypes = BorshUtil.findAnnotation(object.getClass().getInterfaces(), BorshSubTypes.class);</span>
 
-<span class="fc bfc" id="L76" title="All 2 branches covered.">        Optional&lt;BorshSubTypes.BorshSubType&gt; useSubType = Arrays.stream(borshSubTypes.value()).filter(t -&gt; t.use() == object.getClass()).findFirst();</span>
-<span class="pc bpc" id="L77" title="1 of 2 branches missed.">        if (useSubType.isPresent()) {</span>
-<span class="fc" id="L78">            this.writeU8(useSubType.get().when());</span>
-<span class="fc" id="L79">            return this.writePOJO(object);</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        Optional&lt;BorshSubTypes.BorshSubType&gt; useSubType = Arrays.stream(borshSubTypes.value()).filter(t -&gt; t.use() == object.getClass()).findFirst();</span>
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">        if (useSubType.isPresent()) {</span>
+<span class="fc" id="L80">            this.writeU8(useSubType.get().when());</span>
+<span class="fc" id="L81">            return this.writePOJO(object);</span>
         } else {
-<span class="nc" id="L81">            throw new BorshException(&quot;No subtype for this interface&quot;);</span>
+<span class="nc" id="L83">            throw new BorshException(&quot;No subtype for this interface&quot;);</span>
         }
+    }
+
+    /**
+     * Writes an Enum value
+     *
+     * @param object the Enum value
+     * @return the calling BorshOutput instance
+     */
+    default S writeEnum(Object object) {
+<span class="fc" id="L94">        Enum&lt;?&gt; enumerator = (Enum&lt;?&gt;)object;</span>
+
+<span class="fc" id="L96">        return this.writeU8(enumerator.ordinal());</span>
     }
 
     /**
@@ -92,15 +106,15 @@ public interface BorshOutput&lt;S&gt; {
     @NonNull
     default S writePOJO(@NonNull final Object object) {
         try {
-<span class="fc" id="L95">            SortedSet&lt;Field&gt; fields = BorshUtil.filterAndSort(object.getClass().getDeclaredFields());</span>
-<span class="fc bfc" id="L96" title="All 2 branches covered.">            for (final Field field : fields) {</span>
-<span class="fc" id="L97">                field.setAccessible(true);</span>
-<span class="fc" id="L98">                this.write(field.get(object));</span>
-<span class="fc" id="L99">            }</span>
-<span class="nc" id="L100">        } catch (IllegalAccessException error) {</span>
-<span class="nc" id="L101">            throw new BorshException(error);</span>
-<span class="fc" id="L102">        }</span>
-<span class="fc" id="L103">        return (S) this;</span>
+<span class="fc" id="L109">            SortedSet&lt;Field&gt; fields = BorshUtil.filterAndSort(BorshUtil.getAllFields(object.getClass()));</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            for (final Field field : fields) {</span>
+<span class="fc" id="L111">                field.setAccessible(true);</span>
+<span class="fc" id="L112">                this.write(field.get(object));</span>
+<span class="fc" id="L113">            }</span>
+<span class="nc" id="L114">        } catch (IllegalAccessException error) {</span>
+<span class="nc" id="L115">            throw new BorshException(error);</span>
+<span class="fc" id="L116">        }</span>
+<span class="fc" id="L117">        return (S) this;</span>
     }
 
     /**
@@ -111,7 +125,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeU8(final int value) {
-<span class="fc" id="L114">        return this.writeU8((byte) value);</span>
+<span class="fc" id="L128">        return this.writeU8((byte) value);</span>
     }
 
     /**
@@ -122,7 +136,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeU8(final byte value) {
-<span class="fc" id="L125">        return this.write(value);</span>
+<span class="fc" id="L139">        return this.write(value);</span>
     }
 
     /**
@@ -133,7 +147,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeU16(final int value) {
-<span class="fc" id="L136">        return this.writeU16((short) value);</span>
+<span class="fc" id="L150">        return this.writeU16((short) value);</span>
     }
 
     /**
@@ -144,7 +158,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeU16(final short value) {
-<span class="nc" id="L147">        return this.writeBuffer(BorshBuffer.allocate(2).writeU16(value));</span>
+<span class="nc" id="L161">        return this.writeBuffer(BorshBuffer.allocate(2).writeU16(value));</span>
     }
 
     /**
@@ -155,7 +169,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeU32(final int value) {
-<span class="fc" id="L158">        return this.writeBuffer(BorshBuffer.allocate(4).writeU32(value));</span>
+<span class="fc" id="L172">        return this.writeBuffer(BorshBuffer.allocate(4).writeU32(value));</span>
     }
 
     /**
@@ -166,7 +180,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeU64(final long value) {
-<span class="nc" id="L169">        return this.writeBuffer(BorshBuffer.allocate(8).writeU64(value));</span>
+<span class="nc" id="L183">        return this.writeBuffer(BorshBuffer.allocate(8).writeU64(value));</span>
     }
 
     /**
@@ -177,7 +191,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeU128(final long value) {
-<span class="fc" id="L180">        return this.writeU128(BigInteger.valueOf(value));</span>
+<span class="fc" id="L194">        return this.writeU128(BigInteger.valueOf(value));</span>
     }
 
     /**
@@ -189,20 +203,20 @@ public interface BorshOutput&lt;S&gt; {
     @SuppressWarnings(&quot;unchecked&quot;)
     @NonNull
     default S writeU128(@NonNull final BigInteger value) {
-<span class="pc bpc" id="L192" title="1 of 2 branches missed.">        if (value.signum() == -1) {</span>
-<span class="nc" id="L193">            throw new ArithmeticException(&quot;integer underflow&quot;);</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        if (value.signum() == -1) {</span>
+<span class="nc" id="L207">            throw new ArithmeticException(&quot;integer underflow&quot;);</span>
         }
-<span class="pc bpc" id="L195" title="1 of 2 branches missed.">        if (value.bitLength() &gt; 128) {</span>
-<span class="nc" id="L196">            throw new ArithmeticException(&quot;integer overflow&quot;);</span>
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        if (value.bitLength() &gt; 128) {</span>
+<span class="nc" id="L210">            throw new ArithmeticException(&quot;integer overflow&quot;);</span>
         }
-<span class="fc" id="L198">        final byte[] bytes = value.toByteArray();</span>
-<span class="fc bfc" id="L199" title="All 2 branches covered.">        for (int i = bytes.length - 1; i &gt;= 0; i--) {</span>
-<span class="fc" id="L200">            this.write(bytes[i]);</span>
+<span class="fc" id="L212">        final byte[] bytes = value.toByteArray();</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        for (int i = bytes.length - 1; i &gt;= 0; i--) {</span>
+<span class="fc" id="L214">            this.write(bytes[i]);</span>
         }
-<span class="fc bfc" id="L202" title="All 2 branches covered.">        for (int i = 0; i &lt; 16 - bytes.length; i++) {</span>
-<span class="fc" id="L203">            this.write((byte) 0);</span>
+<span class="fc bfc" id="L216" title="All 2 branches covered.">        for (int i = 0; i &lt; 16 - bytes.length; i++) {</span>
+<span class="fc" id="L217">            this.write((byte) 0);</span>
         }
-<span class="fc" id="L205">        return (S) this;</span>
+<span class="fc" id="L219">        return (S) this;</span>
     }
 
     /**
@@ -213,7 +227,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeF32(final float value) {
-<span class="nc" id="L216">        return this.writeBuffer(BorshBuffer.allocate(4).writeF32(value));</span>
+<span class="nc" id="L230">        return this.writeBuffer(BorshBuffer.allocate(4).writeF32(value));</span>
     }
 
     /**
@@ -224,7 +238,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeF64(final double value) {
-<span class="nc" id="L227">        return this.writeBuffer(BorshBuffer.allocate(8).writeF64(value));</span>
+<span class="nc" id="L241">        return this.writeBuffer(BorshBuffer.allocate(8).writeF64(value));</span>
     }
 
     /**
@@ -235,9 +249,9 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeString(@NonNull final String string) {
-<span class="fc" id="L238">        final byte[] bytes = string.getBytes(StandardCharsets.UTF_8);</span>
-<span class="fc" id="L239">        this.writeU32(bytes.length);</span>
-<span class="fc" id="L240">        return this.write(bytes);</span>
+<span class="fc" id="L252">        final byte[] bytes = string.getBytes(StandardCharsets.UTF_8);</span>
+<span class="fc" id="L253">        this.writeU32(bytes.length);</span>
+<span class="fc" id="L254">        return this.write(bytes);</span>
     }
 
     /**
@@ -246,7 +260,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeFixedArray(@NonNull final byte[] array) {
-<span class="fc" id="L249">        return this.write(array);</span>
+<span class="fc" id="L263">        return this.write(array);</span>
     }
 
     /**
@@ -259,11 +273,11 @@ public interface BorshOutput&lt;S&gt; {
     @SuppressWarnings(&quot;unchecked&quot;)
     @NonNull
     default &lt;T&gt; S writeGenericArray(@NonNull final T[] array) {
-<span class="fc" id="L262">        this.writeU32(array.length);</span>
-<span class="fc bfc" id="L263" title="All 2 branches covered.">        for (final T element : array) {</span>
-<span class="fc" id="L264">            this.write(element);</span>
+<span class="fc" id="L276">        this.writeU32(array.length);</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        for (final T element : array) {</span>
+<span class="fc" id="L278">            this.write(element);</span>
         }
-<span class="fc" id="L266">        return (S) this;</span>
+<span class="fc" id="L280">        return (S) this;</span>
     }
 
     /**
@@ -276,11 +290,11 @@ public interface BorshOutput&lt;S&gt; {
     @SuppressWarnings(&quot;unchecked&quot;)
     @NonNull
     default &lt;T&gt; S writeGenericArray(@NonNull final Collection&lt;T&gt; collection) {
-<span class="fc" id="L279">        this.writeU32(collection.size());</span>
-<span class="fc bfc" id="L280" title="All 2 branches covered.">        for (final T element : collection) {</span>
-<span class="fc" id="L281">            this.write(element);</span>
-<span class="fc" id="L282">        }</span>
-<span class="fc" id="L283">        return (S) this;</span>
+<span class="fc" id="L293">        this.writeU32(collection.size());</span>
+<span class="fc bfc" id="L294" title="All 2 branches covered.">        for (final T element : collection) {</span>
+<span class="fc" id="L295">            this.write(element);</span>
+<span class="fc" id="L296">        }</span>
+<span class="fc" id="L297">        return (S) this;</span>
     }
 
     /**
@@ -293,12 +307,12 @@ public interface BorshOutput&lt;S&gt; {
      */
     @SuppressWarnings(&quot;unchecked&quot;)
     default &lt;K, V&gt; S writeGenericMap(@NonNull final Map&lt;K, V&gt; map) {
-<span class="fc" id="L296">        this.writeU32(map.size());</span>
-<span class="fc bfc" id="L297" title="All 2 branches covered.">        for (final Map.Entry&lt;K, V&gt; element : map.entrySet()) {</span>
-<span class="fc" id="L298">            this.write(element.getKey());</span>
-<span class="fc" id="L299">            this.write(element.getValue());</span>
-<span class="fc" id="L300">        }</span>
-<span class="fc" id="L301">        return (S) this;</span>
+<span class="fc" id="L310">        this.writeU32(map.size());</span>
+<span class="fc bfc" id="L311" title="All 2 branches covered.">        for (final Map.Entry&lt;K, V&gt; element : map.entrySet()) {</span>
+<span class="fc" id="L312">            this.write(element.getKey());</span>
+<span class="fc" id="L313">            this.write(element.getValue());</span>
+<span class="fc" id="L314">        }</span>
+<span class="fc" id="L315">        return (S) this;</span>
     }
 
     /**
@@ -309,7 +323,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeBoolean(final boolean value) {
-<span class="fc bfc" id="L312" title="All 2 branches covered.">        return this.writeU8(value ? 1 : 0);</span>
+<span class="fc bfc" id="L326" title="All 2 branches covered.">        return this.writeU8(value ? 1 : 0);</span>
     }
 
     /**
@@ -320,11 +334,11 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeOptional(@NonNull final Optional&lt;?&gt; optional) {
-<span class="fc bfc" id="L323" title="All 2 branches covered.">        if (optional.isPresent()) {</span>
-<span class="fc" id="L324">            this.writeU8(1);</span>
-<span class="fc" id="L325">            return this.write(optional.get());</span>
+<span class="fc bfc" id="L337" title="All 2 branches covered.">        if (optional.isPresent()) {</span>
+<span class="fc" id="L338">            this.writeU8(1);</span>
+<span class="fc" id="L339">            return this.write(optional.get());</span>
         } else {
-<span class="fc" id="L327">            return this.writeU8(0);</span>
+<span class="fc" id="L341">            return this.writeU8(0);</span>
         }
     }
 
@@ -336,7 +350,7 @@ public interface BorshOutput&lt;S&gt; {
      */
     @NonNull
     default S writeBuffer(@NonNull final BorshBuffer buffer) {
-<span class="fc" id="L339">        return this.write(buffer.toByteArray()); // TODO: optimize</span>
+<span class="fc" id="L353">        return this.write(buffer.toByteArray()); // TODO: optimize</span>
     }
 
     /**

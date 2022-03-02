@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BorshUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">borshj</a> &gt; <a href="index.source.html" class="el_package">com.syntifi.near.borshj.util</a> &gt; <span class="el_source">BorshUtil.java</span></div><h1>BorshUtil.java</h1><pre class="source lang-java linenums">package com.syntifi.near.borshj.util;
 
+import com.syntifi.near.borshj.annotation.BorshField;
 import com.syntifi.near.borshj.comparator.FieldComparator;
 import com.syntifi.near.borshj.exception.BorshException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -28,13 +33,13 @@ public final class BorshUtil {
      * @return sorted fields
      */
     public static SortedSet&lt;Field&gt; filterAndSort(Field[] fields) {
-<span class="fc" id="L31">        SortedSet&lt;Field&gt; sortedFields = new TreeSet&lt;&gt;(new FieldComparator());</span>
-<span class="fc bfc" id="L32" title="All 2 branches covered.">        for (Field field : fields) {</span>
-<span class="fc bfc" id="L33" title="All 2 branches covered.">            if (!Modifier.isTransient(field.getModifiers())) {</span>
-<span class="fc" id="L34">                sortedFields.add(field);</span>
+<span class="fc" id="L36">        SortedSet&lt;Field&gt; sortedFields = new TreeSet&lt;&gt;(new FieldComparator());</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">        for (Field field : fields) {</span>
+<span class="fc bfc" id="L38" title="All 2 branches covered.">            if (field.isAnnotationPresent(BorshField.class)) {</span>
+<span class="fc" id="L39">                sortedFields.add(field);</span>
             }
         }
-<span class="fc" id="L37">        return sortedFields;</span>
+<span class="fc" id="L42">        return sortedFields;</span>
     }
 
     /**
@@ -47,19 +52,19 @@ public final class BorshUtil {
      */
     @SuppressWarnings(&quot;unchecked&quot;)
     public static &lt;T extends Annotation&gt; T findAnnotation(Class&lt;?&gt;[] interfaces, Class&lt;T&gt; annotation) {
-<span class="fc" id="L50">        List&lt;Annotation&gt; annotationList = Arrays.stream(interfaces)</span>
+<span class="fc" id="L55">        List&lt;Annotation&gt; annotationList = Arrays.stream(interfaces)</span>
                 // filter any interface with desired annotation
-<span class="fc" id="L52">                .filter(i -&gt; Arrays.stream(i.getAnnotations()).anyMatch(a -&gt; a.annotationType().equals(annotation)))</span>
+<span class="fc" id="L57">                .filter(i -&gt; Arrays.stream(i.getAnnotations()).anyMatch(a -&gt; a.annotationType().equals(annotation)))</span>
                 // get a list of all annotation of given type found
-<span class="fc" id="L54">                .map(a -&gt; a.getAnnotation(annotation))</span>
-<span class="fc" id="L55">                .collect(Collectors.toList());</span>
+<span class="fc" id="L59">                .map(a -&gt; a.getAnnotation(annotation))</span>
+<span class="fc" id="L60">                .collect(Collectors.toList());</span>
 
-<span class="pc bpc" id="L57" title="1 of 2 branches missed.">        if (annotationList.isEmpty()) {</span>
-<span class="nc" id="L58">            throw new BorshException(String.format(&quot;Annotation %s not found on class interfaces&quot;, annotation.getSimpleName()));</span>
-<span class="pc bpc" id="L59" title="1 of 2 branches missed.">        } else if (annotationList.size() != 1) {</span>
-<span class="nc" id="L60">            throw new BorshException(String.format(&quot;Multiple (%s) annotation %s found on class interfaces&quot;, annotationList.size(), annotation.getSimpleName()));</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">        if (annotationList.isEmpty()) {</span>
+<span class="nc" id="L63">            throw new BorshException(String.format(&quot;Annotation %s not found on class interfaces&quot;, annotation.getSimpleName()));</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">        } else if (annotationList.size() != 1) {</span>
+<span class="nc" id="L65">            throw new BorshException(String.format(&quot;Multiple (%s) annotation %s found on class interfaces&quot;, annotationList.size(), annotation.getSimpleName()));</span>
         } else {
-<span class="fc" id="L62">            return (T) annotationList.get(0);</span>
+<span class="fc" id="L67">            return (T) annotationList.get(0);</span>
         }
     }
 
@@ -72,7 +77,7 @@ public final class BorshUtil {
      * @return the annotation of given type
      */
     public static &lt;T extends Annotation&gt; T findAnnotation(Object obj, Class&lt;T&gt; annotation) {
-<span class="nc" id="L75">        return findAnnotation(obj.getClass(), annotation);</span>
+<span class="nc" id="L80">        return findAnnotation(obj.getClass(), annotation);</span>
     }
 
     /**
@@ -86,11 +91,11 @@ public final class BorshUtil {
      */
     @SuppressWarnings(&quot;unchecked&quot;)
     public static &lt;T extends Annotation&gt; T findAnnotation(Class&lt;?&gt; clazz, Class&lt;T&gt; annotation) throws BorshException {
-<span class="fc" id="L89">        Optional&lt;Annotation&gt; ann = Arrays.stream(clazz.getAnnotations()).filter(a -&gt; a.annotationType().equals(annotation)).findFirst();</span>
-<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if (ann.isPresent()) {</span>
-<span class="fc" id="L91">            return (T) ann.get();</span>
+<span class="fc" id="L94">        Optional&lt;Annotation&gt; ann = Arrays.stream(clazz.getAnnotations()).filter(a -&gt; a.annotationType().equals(annotation)).findFirst();</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">        if (ann.isPresent()) {</span>
+<span class="fc" id="L96">            return (T) ann.get();</span>
         } else {
-<span class="nc" id="L93">            throw new BorshException(String.format(&quot;Annotation %s not found on %s&quot;, annotation.getSimpleName(), clazz.getSimpleName()));</span>
+<span class="nc" id="L98">            throw new BorshException(String.format(&quot;Annotation %s not found on %s&quot;, annotation.getSimpleName(), clazz.getSimpleName()));</span>
         }
     }
 
@@ -102,7 +107,7 @@ public final class BorshUtil {
      * @return true if annotation is found, false otherwise
      */
     public static boolean hasAnnotation(Class&lt;?&gt;[] interfaces, Class&lt;? extends Annotation&gt; annotation) {
-<span class="fc" id="L105">        return Arrays.stream(interfaces).anyMatch(i -&gt; Arrays.stream(i.getAnnotations()).anyMatch(a -&gt; a.annotationType().equals(annotation)));</span>
+<span class="fc" id="L110">        return Arrays.stream(interfaces).anyMatch(i -&gt; Arrays.stream(i.getAnnotations()).anyMatch(a -&gt; a.annotationType().equals(annotation)));</span>
     }
 
     /**
@@ -113,7 +118,7 @@ public final class BorshUtil {
      * @return true if annotation is found, false otherwise
      */
     public static boolean hasAnnotation(Object obj, Class&lt;? extends Annotation&gt; annotation) {
-<span class="nc" id="L116">        return hasAnnotation(obj.getClass(), annotation);</span>
+<span class="nc" id="L121">        return hasAnnotation(obj.getClass(), annotation);</span>
     }
 
     /**
@@ -124,7 +129,21 @@ public final class BorshUtil {
      * @return true if annotation is found, false otherwise
      */
     public static boolean hasAnnotation(Class&lt;?&gt; clazz, Class&lt;? extends Annotation&gt; annotation) {
-<span class="fc" id="L127">        return clazz.isAnnotationPresent(annotation);</span>
+<span class="fc" id="L132">        return clazz.isAnnotationPresent(annotation);</span>
+    }
+
+    /**
+     * Gets all fields of class and all superclasses
+     *
+     * @param type the class to search for fields
+     * @return all fields found recursively
+     */
+    public static Field[] getAllFields(Class&lt;?&gt; type) {
+<span class="fc" id="L142">        List&lt;Field&gt; fields = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        for (Class&lt;?&gt; c = type; c != null; c = c.getSuperclass()) {</span>
+<span class="fc" id="L144">            fields.addAll(Arrays.asList(c.getDeclaredFields()));</span>
+        }
+<span class="fc" id="L146">        return fields.toArray(new Field[0]);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
