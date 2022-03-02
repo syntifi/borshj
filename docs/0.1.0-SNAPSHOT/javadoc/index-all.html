@@ -67,7 +67,7 @@
 <!--   -->
 </a></div>
 <!-- ========= END OF TOP NAVBAR ========= -->
-<div class="contentContainer"><a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:W">W</a>&nbsp;<a name="I:A">
+<div class="contentContainer"><a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:W">W</a>&nbsp;<a name="I:A">
 <!--   -->
 </a>
 <h2 class="title">A</h2>
@@ -110,13 +110,13 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/syntifi/near/borshj/exception/BorshException.html#BorshException-java.lang.String-">BorshException(String)</a></span> - Constructor for exception com.syntifi.near.borshj.exception.<a href="com/syntifi/near/borshj/exception/BorshException.html" title="class in com.syntifi.near.borshj.exception">BorshException</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/syntifi/near/borshj/annotation/BorshField.html" title="annotation in com.syntifi.near.borshj.annotation"><span class="typeNameLink">BorshField</span></a> - Annotation Type in <a href="com/syntifi/near/borshj/annotation/package-summary.html">com.syntifi.near.borshj.annotation</a></dt>
+<dd>
+<div class="block">Field metadata annotation</div>
+</dd>
 <dt><a href="com/syntifi/near/borshj/BorshInput.html" title="interface in com.syntifi.near.borshj"><span class="typeNameLink">BorshInput</span></a> - Interface in <a href="com/syntifi/near/borshj/package-summary.html">com.syntifi.near.borshj</a></dt>
 <dd>
 <div class="block">Interface with default implementations for input bytes/reading data</div>
-</dd>
-<dt><a href="com/syntifi/near/borshj/annotation/BorshOrder.html" title="annotation in com.syntifi.near.borshj.annotation"><span class="typeNameLink">BorshOrder</span></a> - Annotation Type in <a href="com/syntifi/near/borshj/annotation/package-summary.html">com.syntifi.near.borshj.annotation</a></dt>
-<dd>
-<div class="block">Order annotation</div>
 </dd>
 <dt><a href="com/syntifi/near/borshj/BorshOutput.html" title="interface in com.syntifi.near.borshj"><span class="typeNameLink">BorshOutput</span></a>&lt;<a href="com/syntifi/near/borshj/BorshOutput.html" title="type parameter in BorshOutput">S</a>&gt; - Interface in <a href="com/syntifi/near/borshj/package-summary.html">com.syntifi.near.borshj</a></dt>
 <dd>
@@ -194,7 +194,7 @@
 <dl>
 <dt><a href="com/syntifi/near/borshj/comparator/FieldComparator.html" title="class in com.syntifi.near.borshj.comparator"><span class="typeNameLink">FieldComparator</span></a> - Class in <a href="com/syntifi/near/borshj/comparator/package-summary.html">com.syntifi.near.borshj.comparator</a></dt>
 <dd>
-<div class="block">Comparator to sort the object's fields according to the BorshOrder annotation</div>
+<div class="block">Comparator to sort the object's fields according to the BorshField annotation</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/syntifi/near/borshj/comparator/FieldComparator.html#FieldComparator--">FieldComparator()</a></span> - Constructor for class com.syntifi.near.borshj.comparator.<a href="com/syntifi/near/borshj/comparator/FieldComparator.html" title="class in com.syntifi.near.borshj.comparator">FieldComparator</a></dt>
 <dd>&nbsp;</dd>
@@ -213,6 +213,16 @@
 <dt><span class="memberNameLink"><a href="com/syntifi/near/borshj/util/BorshUtil.html#findAnnotation-java.lang.Class-java.lang.Class-">findAnnotation(Class&lt;?&gt;, Class&lt;T&gt;)</a></span> - Static method in class com.syntifi.near.borshj.util.<a href="com/syntifi/near/borshj/util/BorshUtil.html" title="class in com.syntifi.near.borshj.util">BorshUtil</a></dt>
 <dd>
 <div class="block">Finds a given annotation on a class</div>
+</dd>
+</dl>
+<a name="I:G">
+<!--   -->
+</a>
+<h2 class="title">G</h2>
+<dl>
+<dt><span class="memberNameLink"><a href="com/syntifi/near/borshj/util/BorshUtil.html#getAllFields-java.lang.Class-">getAllFields(Class&lt;?&gt;)</a></span> - Static method in class com.syntifi.near.borshj.util.<a href="com/syntifi/near/borshj/util/BorshUtil.html" title="class in com.syntifi.near.borshj.util">BorshUtil</a></dt>
+<dd>
+<div class="block">Gets all fields of class and all superclasses</div>
 </dd>
 </dl>
 <a name="I:H">
@@ -295,6 +305,10 @@
 <dt><span class="memberNameLink"><a href="com/syntifi/near/borshj/BorshInput.html#readBoolean--">readBoolean()</a></span> - Method in interface com.syntifi.near.borshj.<a href="com/syntifi/near/borshj/BorshInput.html" title="interface in com.syntifi.near.borshj">BorshInput</a></dt>
 <dd>
 <div class="block">Reads a boolean</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/syntifi/near/borshj/BorshInput.html#readEnum-java.lang.Class-">readEnum(Class&lt;T&gt;)</a></span> - Method in interface com.syntifi.near.borshj.<a href="com/syntifi/near/borshj/BorshInput.html" title="interface in com.syntifi.near.borshj">BorshInput</a></dt>
+<dd>
+<div class="block">Read Enum by its ordinal byte</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/syntifi/near/borshj/BorshBuffer.html#readF32--">readF32()</a></span> - Method in class com.syntifi.near.borshj.<a href="com/syntifi/near/borshj/BorshBuffer.html" title="class in com.syntifi.near.borshj">BorshBuffer</a></dt>
 <dd>&nbsp;</dd>
@@ -434,6 +448,10 @@
 <dd>
 <div class="block">Writes a BorshBuffer</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/syntifi/near/borshj/BorshOutput.html#writeEnum-java.lang.Object-">writeEnum(Object)</a></span> - Method in interface com.syntifi.near.borshj.<a href="com/syntifi/near/borshj/BorshOutput.html" title="interface in com.syntifi.near.borshj">BorshOutput</a></dt>
+<dd>
+<div class="block">Writes an Enum value</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/syntifi/near/borshj/BorshBuffer.html#writeF32-float-">writeF32(float)</a></span> - Method in class com.syntifi.near.borshj.<a href="com/syntifi/near/borshj/BorshBuffer.html" title="class in com.syntifi.near.borshj">BorshBuffer</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/syntifi/near/borshj/BorshOutput.html#writeF32-float-">writeF32(float)</a></span> - Method in interface com.syntifi.near.borshj.<a href="com/syntifi/near/borshj/BorshOutput.html" title="interface in com.syntifi.near.borshj">BorshOutput</a></dt>
@@ -515,7 +533,7 @@
 <div class="block">Writes a byte as U8</div>
 </dd>
 </dl>
-<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:W">W</a>&nbsp;</div>
+<a href="#I:A">A</a>&nbsp;<a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:H">H</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:W">W</a>&nbsp;</div>
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
 <div class="bottomNav"><a name="navbar.bottom">
 <!--   -->
