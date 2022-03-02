@@ -1,6 +1,6 @@
 package com.syntifi.near.borshj;
 
-import com.syntifi.near.borshj.annotation.BorshOrder;
+import com.syntifi.near.borshj.annotation.BorshField;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.DynamicType;
@@ -33,20 +33,20 @@ public class FuzzTests {
                 new ByteBuddy()
                         .subclass(Bean.class)
                         .defineField("name", String.class, Opcodes.ACC_PUBLIC)
-                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
-                                .define("value", 1)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
+                                .define("order", 1)
                                 .build())
                         .defineField("email", String.class, Opcodes.ACC_PUBLIC)
-                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
-                                .define("value", 2)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
+                                .define("order", 2)
                                 .build())
                         .defineField("age", Integer.class, Opcodes.ACC_PUBLIC)
-                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
-                                .define("value", 3)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
+                                .define("order", 3)
                                 .build())
                         .defineField("twitter", Boolean.class, Opcodes.ACC_PUBLIC)
-                        .annotateField(AnnotationDescription.Builder.ofType(BorshOrder.class)
-                                .define("value", 4)
+                        .annotateField(AnnotationDescription.Builder.ofType(BorshField.class)
+                                .define("order", 4)
                                 .build())
                         .make()
                         .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
@@ -79,8 +79,8 @@ public class FuzzTests {
                     .defineField(fieldName, fieldValues[i].getClass(), Opcodes.ACC_PUBLIC)
                     .annotateField(
                             AnnotationDescription.Builder
-                                    .ofType(BorshOrder.class)
-                                    .define("value", i + 1)
+                                    .ofType(BorshField.class)
+                                    .define("order", i + 1)
                                     .build());
         }
 

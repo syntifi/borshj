@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Order annotation
+ * Field metadata annotation
  *
  * @author Alexandre Carvalho
  * @author Andre Bertolace
@@ -14,11 +14,11 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface BorshOrder {
+public @interface BorshField {
     /**
-     * value() gets the order to serialize the field
+     * order() gets the order to serialize the field
      *
      * @return the order to serialize the field
      */
-    int value() default 1;
+    int order();
 }

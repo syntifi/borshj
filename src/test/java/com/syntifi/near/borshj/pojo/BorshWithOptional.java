@@ -3,11 +3,11 @@ package com.syntifi.near.borshj.pojo;
 import java.util.Optional;
 
 import com.syntifi.near.borshj.Borsh;
-import com.syntifi.near.borshj.annotation.BorshOrder;
+import com.syntifi.near.borshj.annotation.BorshField;
 
 public class BorshWithOptional implements Borsh {
 
-    @BorshOrder(1)
+    @BorshField(order = 1)
     public final Optional<String> optional;
 
     public BorshWithOptional() {

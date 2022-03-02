@@ -1,11 +1,12 @@
 package com.syntifi.near.borshj.pojo;
 
-import com.syntifi.near.borshj.annotation.BorshOrder;
+import com.syntifi.near.borshj.annotation.BorshField;
 
 import java.util.Objects;
 
 public class Circle implements Shape {
-    @BorshOrder(1)
+
+    @BorshField(order = 1)
     private int radius;
 
     public Circle() {

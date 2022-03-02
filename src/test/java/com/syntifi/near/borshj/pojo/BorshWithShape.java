@@ -1,12 +1,12 @@
 package com.syntifi.near.borshj.pojo;
 
 import com.syntifi.near.borshj.Borsh;
-import com.syntifi.near.borshj.annotation.BorshOrder;
+import com.syntifi.near.borshj.annotation.BorshField;
 
 import java.util.Objects;
 
 public class BorshWithShape implements Borsh {
-    @BorshOrder
+    @BorshField(order = 1)
     private Shape shape;
 
     public Shape getShape() {

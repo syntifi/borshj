@@ -3,7 +3,7 @@ package com.syntifi.near.borshj.pojo;
 import java.util.Arrays;
 
 import com.syntifi.near.borshj.Borsh;
-import com.syntifi.near.borshj.annotation.BorshOrder;
+import com.syntifi.near.borshj.annotation.BorshField;
 
 /**
  * Test pojo for github issue #4 (https://github.com/near/borshj/issues/4)
@@ -14,16 +14,16 @@ import com.syntifi.near.borshj.annotation.BorshOrder;
  */
 public class PlayerAccount implements Borsh {
 
-    @BorshOrder(1)
+    @BorshField(order = 1)
     public byte[] owner = new byte[32];
 
-    @BorshOrder(2)
+    @BorshField(order = 2)
     public byte[] nft_addr = new byte[32];
 
-    @BorshOrder(3)
+    @BorshField(order = 3)
     public byte is_waiting_match_making;
 
-    @BorshOrder(4)
+    @BorshField(order = 4)
     public byte is_waiting_battle_royal;
 
     public PlayerAccount() {

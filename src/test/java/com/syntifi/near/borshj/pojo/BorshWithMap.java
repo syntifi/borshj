@@ -1,18 +1,18 @@
 package com.syntifi.near.borshj.pojo;
 
 import com.syntifi.near.borshj.Borsh;
-import com.syntifi.near.borshj.annotation.BorshOrder;
+import com.syntifi.near.borshj.annotation.BorshField;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 
 public class BorshWithMap implements Borsh {
-    @BorshOrder
+    @BorshField(order = 1)
     public final Map<Integer, String> map;
 
     public BorshWithMap() {
-        this.map = new TreeMap();
+        this.map = new TreeMap<>();
     }
 
     public BorshWithMap(Map<Integer, String> collection) {
