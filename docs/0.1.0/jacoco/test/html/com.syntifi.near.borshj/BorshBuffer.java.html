@@ -36,7 +36,7 @@ import static java.util.Objects.requireNonNull;
      * @return the buffer's backing byte array
      */
     protected byte[] array() {
-<span class="nc bnc" id="L39" title="All 4 branches missed.">        assert (this.buffer.hasArray());</span>
+<span class="nc bnc" id="L39" title="All 4 branches missed.">        assert this.buffer.hasArray();</span>
 <span class="nc" id="L40">        return this.buffer.array();</span>
     }
 
@@ -82,7 +82,7 @@ import static java.util.Objects.requireNonNull;
      */
     @NonNull
     public byte[] toByteArray() {
-<span class="pc bpc" id="L85" title="2 of 4 branches missed.">        assert (this.buffer.hasArray());</span>
+<span class="pc bpc" id="L85" title="2 of 4 branches missed.">        assert this.buffer.hasArray();</span>
 <span class="fc" id="L86">        final int arrayOffset = this.buffer.arrayOffset();</span>
 <span class="fc" id="L87">        return Arrays.copyOfRange(this.buffer.array(),</span>
 <span class="fc" id="L88">                arrayOffset, arrayOffset + this.buffer.position());</span>
