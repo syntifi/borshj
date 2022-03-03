@@ -8,7 +8,12 @@ import com.syntifi.near.borshj.util.BorshUtil;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.SortedSet;
 
 import static java.util.Objects.requireNonNull;
 
@@ -91,7 +96,7 @@ public interface BorshOutput<S> {
      * @return the calling BorshOutput instance
      */
     default S writeEnum(Object object) {
-        Enum<?> enumerator = (Enum<?>)object;
+        Enum<?> enumerator = (Enum<?>) object;
 
         return this.writeU8(enumerator.ordinal());
     }
@@ -255,6 +260,8 @@ public interface BorshOutput<S> {
     }
 
     /**
+     * Writes a fixed array
+     *
      * @param array the fixed array to write
      * @return the calling BorshOutput instance
      */

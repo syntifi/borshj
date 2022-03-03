@@ -12,6 +12,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -328,7 +329,7 @@ public interface BorshInput {
     default <T> Collection<T> readGenericArray(@NonNull final Class<T> parameterClass) {
         final int length = this.readU32();
         Collection<T> elements;
-        elements = new LinkedList<>();
+        elements = new ArrayList<>();
         for (int i = 0; i < length; i++) {
             elements.add(this.read(parameterClass));
         }

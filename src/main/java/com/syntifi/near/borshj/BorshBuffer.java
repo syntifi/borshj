@@ -36,7 +36,7 @@ public class BorshBuffer implements BorshInput, BorshOutput<BorshBuffer> {
      * @return the buffer's backing byte array
      */
     protected byte[] array() {
-        assert (this.buffer.hasArray());
+        assert this.buffer.hasArray();
         return this.buffer.array();
     }
 
@@ -82,7 +82,7 @@ public class BorshBuffer implements BorshInput, BorshOutput<BorshBuffer> {
      */
     @NonNull
     public byte[] toByteArray() {
-        assert (this.buffer.hasArray());
+        assert this.buffer.hasArray();
         final int arrayOffset = this.buffer.arrayOffset();
         return Arrays.copyOfRange(this.buffer.array(),
                 arrayOffset, arrayOffset + this.buffer.position());

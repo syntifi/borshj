@@ -21,7 +21,8 @@ public interface Borsh {
      * @param object the object to serialize
      * @return the serialized byte array
      */
-    @NonNull static byte[] serialize(@NonNull final Object object) {
+    @NonNull
+    static byte[] serialize(@NonNull final Object object) {
         return BorshBuffer.allocate(4096).write(requireNonNull(object)).toByteArray();
     }
 
@@ -30,21 +31,24 @@ public interface Borsh {
      *
      * @param bytes bytes to deserialize
      * @param clazz class type
-     * @param <T> type param
+     * @param <T>   type param
      * @return populated instance of the given class type
      */
-    @NonNull static <T> T deserialize(@NonNull final byte[] bytes, @NonNull final Class<T> clazz) {
+    @NonNull
+    static <T> T deserialize(@NonNull final byte[] bytes, @NonNull final Class<T> clazz) {
         return deserialize(BorshBuffer.wrap(requireNonNull(bytes)), clazz);
     }
 
     /**
+     * Deserializes a buffer to a class type
      *
      * @param buffer BorshBuffer to read from
-     * @param clazz class type
-     * @param <T> type param
+     * @param clazz  class type
+     * @param <T>    type param
      * @return populated instance of the given class type
      */
-    @NonNull static <T> T deserialize(@NonNull final BorshBuffer buffer, @NonNull final Class<T> clazz) {
+    @NonNull
+    static <T> T deserialize(@NonNull final BorshBuffer buffer, @NonNull final Class<T> clazz) {
         return buffer.read(requireNonNull(clazz));
     }
 
