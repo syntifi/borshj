@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BorshBuffer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">borshj</a> &gt; <a href="index.source.html" class="el_package">com.syntifi.near.borshj</a> &gt; <span class="el_source">BorshBuffer.java</span></div><h1>BorshBuffer.java</h1><pre class="source lang-java linenums">package com.syntifi.near.borshj;
+
+import androidx.annotation.NonNull;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Arrays;
+
+import static java.util.Objects.requireNonNull;
+
+/**
+ * Borsh buffer implementation for both input/output operations
+ *
+ * @author Alexandre Carvalho
+ * @author Andre Bertolace
+ * @since 0.1.0
+ */
+<span class="pc bpc" id="L18" title="1 of 2 branches missed.">public class BorshBuffer implements BorshInput, BorshOutput&lt;BorshBuffer&gt; {</span>
+    @NonNull
+    protected final ByteBuffer buffer;
+
+    /**
+     * Creates a BorshBuffer instance
+     *
+     * @param buffer the buffer to read/write
+     */
+<span class="fc" id="L27">    protected BorshBuffer(@NonNull final ByteBuffer buffer) {</span>
+<span class="fc" id="L28">        this.buffer = requireNonNull(buffer);</span>
+<span class="fc" id="L29">        this.buffer.order(ByteOrder.LITTLE_ENDIAN); // serialization standard (java works with big endian as default)</span>
+<span class="fc" id="L30">        this.buffer.mark();</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * Gets the buffer's backing byte array, asserting it exists.
+     *
+     * @return the buffer's backing byte array
+     */
+    protected byte[] array() {
+<span class="nc bnc" id="L39" title="All 4 branches missed.">        assert this.buffer.hasArray();</span>
+<span class="nc" id="L40">        return this.buffer.array();</span>
+    }
+
+    /**
+     * Creates a BoshBuffer instance with given capacity.
+     * Whether it has a backing array is unspecified.
+     *
+     * @param capacity the capacity to allocate
+     * @return the BorshBuffer instance
+     */
+    @NonNull
+    public static BorshBuffer allocate(final int capacity) {
+<span class="fc" id="L52">        return new BorshBuffer(ByteBuffer.allocate(capacity));</span>
+    }
+
+    /**
+     * Creates a BoshBuffer instance with given capacity.
+     * It will have a backing array, and its array offset will be zero.
+     *
+     * @param capacity the capacity to allocate
+     * @return the BorshBuffer instance
+     */
+    @NonNull
+    public static BorshBuffer allocateDirect(final int capacity) {
+<span class="nc" id="L64">        return new BorshBuffer(ByteBuffer.allocateDirect(capacity));</span>
+    }
+
+    /**
+     * Instantiate a BorshBuffer from a byte array.
+     *
+     * @param array the array to back the buffer
+     * @return the BorshBuffer instance
+     */
+    @NonNull
+    public static BorshBuffer wrap(final byte[] array) {
+<span class="fc" id="L75">        return new BorshBuffer(ByteBuffer.wrap(array));</span>
+    }
+
+    /**
+     * Gets a byte array from the buffer's content.
+     *
+     * @return byte array from the buffer's content
+     */
+    @NonNull
+    public byte[] toByteArray() {
+<span class="pc bpc" id="L85" title="2 of 4 branches missed.">        assert this.buffer.hasArray();</span>
+<span class="fc" id="L86">        final int arrayOffset = this.buffer.arrayOffset();</span>
+<span class="fc" id="L87">        return Arrays.copyOfRange(this.buffer.array(),</span>
+<span class="fc" id="L88">                arrayOffset, arrayOffset + this.buffer.position());</span>
+    }
+
+    /**
+     * Gets the buffer capacity
+     *
+     * @return the buffer's capacity
+     */
+    public int capacity() {
+<span class="nc" id="L97">        return this.buffer.capacity();</span>
+    }
+
+    /**
+     * Resets the buffer.
+     *
+     * @return itself
+     */
+    @NonNull
+    public BorshBuffer reset() {
+<span class="fc" id="L107">        this.buffer.reset();</span>
+<span class="fc" id="L108">        return this;</span>
+    }
+
+    @Override
+    public short readU16() {
+<span class="fc" id="L113">        return this.buffer.getShort();</span>
+    }
+
+    @Override
+    public int readU32() {
+<span class="fc" id="L118">        return this.buffer.getInt();</span>
+    }
+
+    @Override
+    public long readU64() {
+<span class="fc" id="L123">        return this.buffer.getLong();</span>
+    }
+
+    @Override
+    public float readF32() {
+<span class="fc" id="L128">        return this.buffer.getFloat();</span>
+    }
+
+    @Override
+    public double readF64() {
+<span class="fc" id="L133">        return this.buffer.getDouble();</span>
+    }
+
+    @Override
+    public byte read() {
+<span class="fc" id="L138">        return this.buffer.get();</span>
+    }
+
+    @Override
+    public void read(@NonNull final byte[] result, final int offset, final int length) {
+<span class="fc" id="L143">        this.buffer.get(result, offset, length);</span>
+<span class="fc" id="L144">    }</span>
+
+    @Override
+    @NonNull
+    public BorshBuffer writeU16(final short value) {
+<span class="fc" id="L149">        this.buffer.putShort(value);</span>
+<span class="fc" id="L150">        return this;</span>
+    }
+
+    @Override
+    @NonNull
+    public BorshBuffer writeU32(final int value) {
+<span class="fc" id="L156">        this.buffer.putInt(value);</span>
+<span class="fc" id="L157">        return this;</span>
+    }
+
+    @Override
+    @NonNull
+    public BorshBuffer writeU64(final long value) {
+<span class="fc" id="L163">        this.buffer.putLong(value);</span>
+<span class="fc" id="L164">        return this;</span>
+    }
+
+    @Override
+    @NonNull
+    public BorshBuffer writeF32(final float value) {
+<span class="fc" id="L170">        this.buffer.putFloat(value);</span>
+<span class="fc" id="L171">        return this;</span>
+    }
+
+    @Override
+    @NonNull
+    public BorshBuffer writeF64(final double value) {
+<span class="fc" id="L177">        this.buffer.putDouble(value);</span>
+<span class="fc" id="L178">        return this;</span>
+    }
+
+    @Override
+    @NonNull
+    public BorshBuffer write(@NonNull final byte[] bytes) {
+<span class="fc" id="L184">        this.buffer.put(bytes);</span>
+<span class="fc" id="L185">        return this;</span>
+    }
+
+    @Override
+    @NonNull
+    public BorshBuffer write(final byte b) {
+<span class="fc" id="L191">        this.buffer.put(b);</span>
+<span class="fc" id="L192">        return this;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Borsh.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">borshj</a> &gt; <a href="index.source.html" class="el_package">com.syntifi.near.borshj</a> &gt; <span class="el_source">Borsh.java</span></div><h1>Borsh.java</h1><pre class="source lang-java linenums">package com.syntifi.near.borshj;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.util.Arrays;
+
+import static java.util.Objects.requireNonNull;
+
+/**
+ * Borsh interface for POJO serialization support
+ *
+ * @author Alexandre Carvalho
+ * @author Andre Bertolace
+ * @since 0.1.0
+ */
+public interface Borsh {
+    /**
+     * Serializes object with a BorshBuffer
+     *
+     * @param object the object to serialize
+     * @return the serialized byte array
+     */
+    @NonNull
+    static byte[] serialize(@NonNull final Object object) {
+<span class="fc" id="L26">        return BorshBuffer.allocate(4096).write(requireNonNull(object)).toByteArray();</span>
+    }
+
+    /**
+     * Deserializes given byte array to class type
+     *
+     * @param bytes bytes to deserialize
+     * @param clazz class type
+     * @param &lt;T&gt;   type param
+     * @return populated instance of the given class type
+     */
+    @NonNull
+    static &lt;T&gt; T deserialize(@NonNull final byte[] bytes, @NonNull final Class&lt;T&gt; clazz) {
+<span class="fc" id="L39">        return deserialize(BorshBuffer.wrap(requireNonNull(bytes)), clazz);</span>
+    }
+
+    /**
+     * Deserializes a buffer to a class type
+     *
+     * @param buffer BorshBuffer to read from
+     * @param clazz  class type
+     * @param &lt;T&gt;    type param
+     * @return populated instance of the given class type
+     */
+    @NonNull
+    static &lt;T&gt; T deserialize(@NonNull final BorshBuffer buffer, @NonNull final Class&lt;T&gt; clazz) {
+<span class="fc" id="L52">        return buffer.read(requireNonNull(clazz));</span>
+    }
+
+    /**
+     * Checks if a class type is serializable with borsh
+     *
+     * @param clazz the class type to test
+     * @return true if it is serializable
+     */
+    static boolean isSerializable(@Nullable final Class&lt;?&gt; clazz) {
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if (clazz == null) {</span>
+<span class="nc" id="L63">            return false;</span>
+        }
+<span class="nc bnc" id="L65" title="All 4 branches missed.">        return Arrays.stream(clazz.getInterfaces()).anyMatch(i -&gt; i == Borsh.class) ||</span>
+<span class="nc bnc" id="L66" title="All 2 branches missed.">                isSerializable(clazz.getSuperclass());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
